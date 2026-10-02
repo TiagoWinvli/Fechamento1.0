@@ -1,0 +1,2556 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fechamento — Calçados</title>
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#121212">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Fechamento">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper: #121212;
+  --paper-2: #1e1e1e;
+  --ink: #f0f0f0;
+  --ink-soft: #a0a0a0;
+  --line: #333333;
+  --card: #181818;
+
+  --c-basq: #889cf5;
+  --c-basq-soft: #1a2240;
+  --c-bota: #6fcf83;
+  --c-bota-soft: #1c3320;
+  --c-plat: #b794f6;
+  --c-plat-soft: #3a2a4d;
+  --total-bg: #322a47;
+  --total-text: #cbb6f5;
+
+  --danger: #b3402f;
+  --fechamento: #ffa733;
+}
+
+*{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
+html,body{margin:0;padding:0; overflow-x:hidden; width:100%;}
+body{
+  background: var(--paper);
+  background-image: linear-gradient(var(--paper-2) 1px, transparent 1px);
+  background-size: 100% 34px;
+  color: var(--ink);
+  font-family:'Space Grotesk', system-ui, sans-serif;
+  font-size: 16px;
+  min-height:100vh;
+  padding-bottom: 96px;
+  transition: background-color 0.3s, color 0.3s;
+}
+::selection{ background: var(--c-basq); color:#fff;}
+
+header{
+  background: var(--paper);
+  border-bottom: 2px solid var(--ink);
+  padding: 16px 18px 12px;
+}
+.title-row{ display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap;}
+.brand{ display:flex; align-items:center; gap:10px; min-width:0;}
+.brand-text{ min-width:0; flex:1;}
+.brand-icon{ width:60px; height:60px; border-radius:13px; flex-shrink:0; object-fit:cover;}
+@media(max-width:380px){ .brand-icon{ width:50px; height:50px; border-radius:11px; } }
+.stamp{
+  font-family:'Bebas Neue', sans-serif;
+  border: 2.5px solid var(--ink);
+  border-radius: 4px;
+  padding: 3px 9px 1px;
+  font-size: 15px;
+  letter-spacing: 1px;
+  transform: rotate(-3deg);
+  line-height:1;
+}
+h1{ font-size: 21px; margin:0; font-weight:700; letter-spacing:-.2px; white-space:normal; overflow-wrap:break-word;}
+.h-sub{ font-size:12.5px; color:var(--ink-soft); font-family:'JetBrains Mono',monospace; margin-top:1px; white-space:normal; overflow-wrap:break-word; line-height:1.3;}
+.count-pill{
+  font-family:'JetBrains Mono', monospace;
+  font-size:13.5px; font-weight:600;
+  background: var(--ink); color: var(--paper);
+  border-radius: 20px; padding: 6px 13px;
+  white-space:nowrap; flex-shrink:0;
+}
+@media(max-width:380px){
+  .count-pill{ font-size:11.5px; padding:5px 10px; }
+  h1{ font-size:18px; }
+}
+.searchbar{ margin-top:12px; position:relative;}
+.searchbar input{
+  width:100%; background: var(--card); border:1.5px solid var(--line);
+  border-radius: 10px; padding: 12px 14px 12px 38px;
+  font-family:'JetBrains Mono', monospace; font-size:16px; color:var(--ink);
+  outline:none;
+}
+.searchbar input:focus{ border-color: var(--ink);}
+.searchbar svg{ position:absolute; left:11px; top:50%; transform:translateY(-50%); opacity:.45;}
+
+nav.tabs{
+  position: fixed; left:0; right:0; bottom:0; z-index:30;
+  background: var(--card);
+  border-top: 2px solid var(--ink);
+  display:flex;
+  padding: 6px 6px calc(6px + env(safe-area-inset-bottom));
+  gap:4px;
+}
+nav.tabs button{
+  flex:1; display:flex; align-items:center; justify-content:center;
+  background:transparent; border:none; padding:12px 4px; border-radius:10px;
+  font-family:'Space Grotesk', sans-serif; font-size:14px; font-weight:600;
+  color: var(--ink-soft); cursor:pointer;
+}
+nav.tabs button.active{ background: var(--total-bg); color: var(--total-text); font-weight:700;}
+
+main{ padding: 16px 10px 20px; max-width: 1100px; margin: 0 auto; overflow-x:hidden;}
+.grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap:8px; transition: opacity .16s ease, transform .16s ease;}
+.grid.swiping{ opacity:0; }
+.grid.swiping.from-right{ transform: translateX(18px); }
+.grid.swiping.from-left{ transform: translateX(-18px); }
+@media(min-width:640px){ .grid{grid-template-columns: repeat(4,1fr); gap:12px;} }
+@media(min-width:900px){ .grid{grid-template-columns: repeat(5,1fr); gap:12px;} }
+.card{ grid-column: span 1;}
+
+.card{
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  position:relative;
+  display:flex; flex-direction:column;
+  transition: transform .1s, border-color .2s;
+  -webkit-touch-callout:none; -webkit-user-select:none; user-select:none;
+  touch-action:pan-y;
+}
+.card.fechamento{ border: 2px solid var(--fechamento); box-shadow: 0 0 8px rgba(217, 114, 12, 0.3); }
+.card:active{ transform: scale(.98);}
+.card.dragging-card{
+  position:fixed; z-index:100; margin:0; touch-action:none;
+  box-shadow: 0 14px 30px rgba(0,0,0,.4);
+  transform: scale(1.05) rotate(-1deg);
+  transition: box-shadow .15s ease;
+  cursor:grabbing;
+}
+.card-placeholder{
+  background: transparent; border: 2px dashed var(--line); box-shadow:none;
+}
+.photo{
+  aspect-ratio: 1/1; width:100%;
+  background: var(--paper-2);
+  display:flex; align-items:center; justify-content:center;
+  position:relative; overflow:hidden;
+}
+.photo img{ width:100%; height:100%; object-fit:cover;}
+.photo .ph-icon{ opacity:.28;}
+.cat-tag{
+  position:absolute; top:8px; left:8px;
+  font-family:'Bebas Neue', sans-serif; font-size:11px; letter-spacing:.5px;
+  border-radius:4px; padding:2px 7px 1px; border:1.5px solid currentColor;
+  background: var(--card); z-index: 2;
+}
+.cat-tag.basquete{ color: var(--c-basq);}
+.cat-tag.bota{ color: var(--c-bota);}
+.cat-tag.plataforma{ color: var(--c-plat);}
+.fechamento-badge {
+  position:absolute; top:8px; right:8px; font-size: 16px; z-index: 2; display: none;
+}
+.card.fechamento .fechamento-badge { display: block; text-shadow: 0 0 4px rgba(0,0,0,0.5); }
+
+.card-body{ padding:10px 11px 11px; display:flex; flex-direction:column; gap:3px; flex:1;}
+.codigo{ font-family:'JetBrains Mono', monospace; font-weight:700; font-size:16px; letter-spacing:-.2px;}
+.cor{ font-size:13.5px; color: var(--ink-soft); line-height:1.3; min-height:17px;}
+.total-chip{
+  font-family:'JetBrains Mono', monospace; font-size:12.5px; font-weight:700;
+  color: var(--total-text); background: var(--total-bg); border-radius:20px; padding:4px 10px;
+  white-space:nowrap; flex-shrink:0;
+}
+.sizes-head{ display:flex; justify-content:space-between; align-items:center; margin-top:8px; margin-bottom:5px; gap:6px; flex-wrap:wrap;}
+.sizes-head span:first-child{ min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.sizes-head span{ font-size:11.5px; text-transform:uppercase; letter-spacing:.06em; color: var(--ink-soft); font-weight:600;}
+.size-list{ display:flex; flex-wrap:wrap; gap:6px; flex:1; align-content:flex-start; align-items:flex-start;}
+.size-chip{
+  display:flex; align-items:center; gap:6px;
+  font-family:'JetBrains Mono', monospace; font-size:14px; font-weight:600;
+  background: var(--paper-2); border-radius:7px; padding:5px 5px 5px 10px;
+  cursor:pointer; color: var(--ink); min-width:0; max-width:100%; flex-basis:100%;
+}
+.size-chip:hover{ background: var(--line);}
+.size-chip-label{ display:flex; flex-direction:column; align-items:flex-start; line-height:1.25; min-width:0; flex:1;}
+.size-chip-num, .size-chip-qtd{ white-space:nowrap; }
+.size-chip-obs{ font-size:10px; font-weight:700; max-width:100%; white-space:normal; overflow-wrap:break-word; line-height:1.3; margin-top:1px;}
+.size-chip.has-obs{ border-left-width:4px; border-left-style:solid; padding-left:8px; }
+.size-chip-qtd{ font-size:11.5px; font-weight:500; color: var(--ink-soft);}
+.size-chip .x{
+  width:24px; height:24px; border-radius:50%; background: var(--card);
+  display:flex; align-items:center; justify-content:center; font-size:15px; color: var(--danger);
+  line-height:1; flex-shrink:0;
+}
+.size-chip .x:hover{ background: var(--danger); color:#fff;}
+.add-size-chip{
+  display:flex; align-items:center; justify-content:center;
+  font-family:'JetBrains Mono', monospace; font-size:15px; font-weight:700;
+  background: transparent; border: 1.5px dashed var(--line); border-radius:7px;
+  padding:5px 11px; cursor:pointer; color: var(--ink-soft);
+}
+.size-list .add-size-chip{ flex-basis:100%; justify-content:center; padding:11px 14px; min-height:40px; margin-top:2px; }
+.add-size-chip:hover{ border-color: var(--ink); color: var(--ink);}
+.card-actions{ display:flex; border-top:1.5px solid var(--line); }
+.card-actions button{
+  flex:1; background:transparent; border:none; padding:10px 4px;
+  font-family:'Space Grotesk',sans-serif; font-size:13.5px; font-weight:600;
+  color: var(--ink-soft); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px;
+}
+.card-actions button.fechar-btn { color: var(--ink-soft); font-size: 14px;}
+.card.fechamento .card-actions button.fechar-btn { color: var(--fechamento); }
+.card-actions button:not(:last-child){ border-right:1.5px solid var(--line);}
+.card-actions button.del{ color: var(--danger);}
+.card-actions button:hover{ background: var(--paper-2);}
+
+.empty{ grid-column: 1/-1; text-align:center; padding: 60px 20px; color: var(--ink-soft); font-family:'JetBrains Mono',monospace; font-size:14.5px; }
+
+.ph-icon{ font-size:38px; }
+
+@media(max-width:640px){
+  .card{ border-radius:12px; }
+  .card-body{ padding:8px 8px 9px; gap:3px; }
+  .codigo{ font-size:13.5px; line-height:1.2; word-break:break-all; }
+  .cor{ font-size:11px; min-height:0; line-height:1.25; }
+  .total-chip{ font-size:10.5px; padding:3px 7px; }
+  .sizes-head{ margin-top:6px; margin-bottom:4px; }
+  .sizes-head span{ font-size:9.5px; }
+  .size-list{ gap:4px; }
+  .size-chip{ font-size:12px; padding:4px 4px 4px 7px; gap:4px; border-radius:6px; }
+  .size-chip .x{ width:21px; height:21px; font-size:13px; }
+  .add-size-chip{ font-size:13px; padding:4px 8px; border-radius:6px; }
+  .cat-tag{ font-size:9.5px; padding:1.5px 6px 0; top:6px; left:6px; }
+  .fechamento-badge{ font-size:13px; top:6px; right:6px; }
+  .ph-icon{ font-size:30px; }
+  .card-actions button{ padding:9px 3px; font-size:14px; }
+  .card-actions .btn-label{ display:none; }
+}
+
+.fab{
+  position: fixed; right:18px; bottom: 84px; z-index:25;
+  width:56px; height:56px; border-radius:50%;
+  background: var(--ink); color: var(--paper);
+  border:none; font-size:28px; line-height:1;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow: 0 8px 20px rgba(0,0,0,.35);
+  cursor:pointer;
+}
+.fab:active{ transform: scale(.94);}
+
+.overlay{
+  position:fixed; top:0; left:0; right:0; height:100vh; height:100dvh; background: rgba(0,0,0,.65);
+  display:none; align-items:flex-end; justify-content:center; z-index:50;
+}
+.overlay.show{ display:flex;}
+.overlay.overlay-center{ align-items:center; padding:20px; }
+.confirm-dialog{
+  border-radius:20px; animation: popin .18s ease; width:100%;
+}
+@keyframes popin{ from{ transform:scale(.94); opacity:0;} to{transform:scale(1); opacity:1;} }
+.sheet{
+  background: var(--paper); width:100%; max-width: 480px;
+  border-radius: 20px 20px 0 0; padding: 18px 18px calc(18px + env(safe-area-inset-bottom));
+  max-height: 82vh; overflow-y:auto;
+  animation: slideup .22s ease;
+}
+@keyframes slideup{ from{ transform:translateY(30px); opacity:0;} to{transform:translateY(0); opacity:1;} }
+.sheet-handle{ width:38px; height:4px; background: var(--line); border-radius:4px; margin: 0 auto 14px;}
+.sheet h2{ margin:0 0 14px; font-size:19px;}
+.field{ margin-bottom:14px;}
+.field label{ display:block; font-size:12.5px; text-transform:uppercase; letter-spacing:.06em; color: var(--ink-soft); margin-bottom:6px; font-weight:600;}
+.field input[type=text], .field input[type=number], .field select{
+  width:100%; background: var(--card); border:1.5px solid var(--line); border-radius:9px;
+  padding: 12px 13px; font-family:'Space Grotesk',sans-serif; font-size:16px; color: var(--ink); outline:none;
+}
+.field input:focus, .field select:focus{ border-color: var(--ink);}
+.field-checkbox { display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--ink); font-weight: 600; font-size: 15px;}
+.field-checkbox input { width: 20px; height: 20px; cursor: pointer; accent-color: var(--fechamento);}
+.cat-choice{ display:flex; gap:8px;}
+.catalog-wrap{ position:relative; }
+.catalog-wrap input{
+  width:100%; background: var(--card); border:1.5px solid var(--line); border-radius:9px;
+  padding: 12px 13px; font-family:'Space Grotesk',sans-serif; font-size:16px; color: var(--ink); outline:none;
+}
+.catalog-wrap input:focus{ border-color: var(--ink);}
+.catalog-results{
+  position:absolute; left:0; right:0; top:calc(100% + 4px); z-index:5;
+  background: var(--card); border:1.5px solid var(--line); border-radius:10px;
+  max-height:240px; overflow-y:auto; display:none; box-shadow:0 8px 18px rgba(0,0,0,.18);
+}
+.catalog-results.show{ display:block; }
+.catalog-item{
+  display:flex; align-items:center; gap:10px; padding:8px 10px; cursor:pointer;
+  border-bottom:1px solid var(--line);
+}
+.catalog-item:last-child{ border-bottom:none; }
+.catalog-item:hover, .catalog-item:active{ background: var(--paper-2); }
+.catalog-item .thumb{
+  width:52px; height:52px; border-radius:8px; background: var(--paper-2); flex:0 0 52px;
+  display:flex; align-items:center; justify-content:center; overflow:hidden; font-size:18px;
+}
+.catalog-item .thumb img{ width:100%; height:100%; object-fit:cover; }
+.catalog-item .info{ min-width:0; flex:1; }
+.catalog-item .info .cod{ font-family:'JetBrains Mono',monospace; font-weight:700; font-size:13.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.catalog-item .info .c{ font-size:12px; color: var(--ink-soft); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.catalog-empty{ padding:12px 10px; font-size:13px; color: var(--ink-soft); font-family:'JetBrains Mono',monospace;}
+.catalog-item.stock-row{ cursor:default; }
+.catalog-item.stock-row:hover, .catalog-item.stock-row:active{ background: transparent; }
+.stock-row .stock-actions{ display:flex; gap:6px; flex-shrink:0; }
+.stock-row{ --stock-thumb: clamp(72px, 22vw, 96px); }
+.stock-row .thumb{ width:var(--stock-thumb); height:var(--stock-thumb); flex:0 0 var(--stock-thumb); border-radius:10px; font-size:30px; cursor:zoom-in; }
+.stock-row .info .cod, .stock-row .info .c{ white-space:normal; overflow-wrap:anywhere; }
+.stock-row .stock-actions .mini-btn{ flex:0 0 34px; width:34px; padding:8px 0; }
+.photo-input.big img{ max-height:200px; }
+.stock-sheet{
+  max-height:88vh; max-height:88dvh; overflow:hidden;
+  display:flex; flex-direction:column;
+  padding-bottom: calc(22px + env(safe-area-inset-bottom));
+}
+.stock-sheet > *{ flex-shrink:0; }
+.stock-sheet > #stockList{ flex:1 1 auto; flex-shrink:1; min-height:120px; }
+.cat-choice button{
+  flex:1; padding:11px 6px; border-radius:9px; border:1.5px solid var(--line);
+  background: var(--card); font-family:'Space Grotesk',sans-serif; font-size:14px; font-weight:600;
+  color: var(--ink-soft); cursor:pointer;
+}
+.cat-choice button.sel[data-cat="basquete"]{ background: var(--c-basq-soft); border-color: var(--c-basq); color: var(--c-basq);}
+.cat-choice button.sel[data-cat="bota"]{ background: var(--c-bota-soft); border-color: var(--c-bota); color: var(--c-bota);}
+.cat-choice button.sel[data-cat="plataforma"]{ background: var(--c-plat-soft); border-color: var(--c-plat); color: var(--c-plat);}
+.cat-choice button.sel[data-cat="todos"]{ background: var(--paper-2); border-color: var(--ink); color: var(--ink);}
+.cat-choice.compact button{ padding:8px 4px; font-size:12.5px; }
+.photo-input{
+  border: 1.5px dashed var(--line); border-radius: 10px; padding: 14px; text-align:center;
+  cursor:pointer; position:relative; background: var(--card);
+}
+.photo-input img{ max-width:100%; max-height:120px; border-radius:8px; margin-bottom:6px;}
+.photo-input span{ display:block; font-size:12px; color: var(--ink-soft);}
+.photo-input input[type=file]{ position:absolute; inset:0; opacity:0; cursor:pointer;}
+.field-row{ display:flex; gap:10px;}
+.field-row .field{ flex:1;}
+.size-row-input{ display:flex; gap:8px; align-items:center; margin-bottom:8px; }
+.size-row-input input{
+  flex:1; min-width:0; background: var(--card); border:1.5px solid var(--line); border-radius:9px;
+  padding: 11px 12px; font-family:'Space Grotesk',sans-serif; font-size:16px; color: var(--ink); outline:none;
+}
+.size-row-input input:focus{ border-color: var(--ink); }
+.size-row-input .row-remove{
+  flex:0 0 34px; width:34px; height:34px; border-radius:50%; border:1.5px solid var(--line);
+  background: var(--card); color: var(--danger); cursor:pointer; font-size:14px;
+  display:flex; align-items:center; justify-content:center;
+}
+.size-row-input .row-remove:hover{ background: var(--danger); color:#fff; border-color:var(--danger); }
+.row-note-wrap{ display:flex; align-items:center; gap:8px; margin:-4px 0 10px 0; }
+.row-note-wrap input{
+  flex:1; min-width:0; background: var(--card); border:1.5px solid var(--line); border-radius:8px;
+  padding: 8px 10px; font-family:'Space Grotesk',sans-serif; font-size:13.5px; color: var(--ink); outline:none;
+}
+.row-note-wrap input:focus{ border-color: var(--ink); }
+.color-swatches{ display:flex; gap:5px; flex-shrink:0; }
+.swatch{
+  width:22px; height:22px; border-radius:50%; border:1.5px solid var(--line);
+  cursor:pointer; padding:0; background: var(--card); position:relative;
+}
+.swatch[data-color=""]{ background: var(--card); }
+.swatch[data-color=""]::after{ content:'✕'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:10px; color:var(--ink-soft); }
+.swatch.sel{ border-color: var(--ink); border-width:2.5px; }
+.sheet-actions{ display:flex; gap:10px; margin-top:6px;}
+.btn{
+  flex:1; border:none; border-radius:10px; padding:14px; font-family:'Space Grotesk',sans-serif;
+  font-weight:700; font-size:16px; cursor:pointer;
+}
+.btn-primary{ background: var(--ink); color: var(--paper);}
+.btn-secondary{ background: var(--card); color: var(--ink-soft); border:1.5px solid var(--line);}
+
+.topbar-actions{ display:flex; gap:8px; margin-top:10px;}
+.week-bar-wrap{ display:flex; align-items:center; gap:6px; margin-top:10px;}
+.week-bar{
+  display:flex; gap:6px; overflow-x:auto; scrollbar-width:none; flex:1;
+  padding-bottom:2px;
+}
+.week-bar::-webkit-scrollbar{ display:none; }
+.week-chip{
+  flex-shrink:0; white-space:nowrap;
+  font-family:'JetBrains Mono',monospace; font-size:12.5px; font-weight:600;
+  background: var(--card); border:1.5px solid var(--line); border-radius:20px;
+  padding:7px 13px; cursor:pointer; color: var(--ink-soft);
+}
+.week-chip.active{ background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.week-chip.add{ border-style:dashed; }
+.week-manage-btn{
+  flex-shrink:0; white-space:nowrap;
+  padding:7px 12px; border-radius:20px;
+  background: var(--card); border:1.5px solid var(--line); color: var(--ink-soft);
+  font-family:'JetBrains Mono',monospace; font-size:12.5px; font-weight:600;
+  cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px;
+}
+.week-manage-btn:hover{ border-color: var(--ink); color: var(--ink); }
+.week-tag-body{
+  font-size:11.5px; color: var(--ink-soft); font-family:'JetBrains Mono',monospace;
+  margin-top:1px;
+}
+@media(max-width:640px){
+  .week-chip{ font-size:11px; padding:6px 10px; }
+  .week-manage-btn{ font-size:11px; padding:6px 9px; }
+  .week-tag-body{ font-size:10px; }
+}
+.mini-btn{
+  flex:1; font-family:'JetBrains Mono',monospace; font-size:12.5px; font-weight:600;
+  background: var(--card); border:1.5px solid var(--line); border-radius:8px; padding:9px 6px; cursor:pointer;
+  color: var(--ink-soft);
+}
+.mini-btn.icon-btn { flex: 0 0 40px; display: flex; align-items: center; justify-content: center; font-size: 17px; }
+.search-row{ display:flex; gap:8px; align-items:stretch; margin-top:12px; }
+.search-row .searchbar{ margin-top:0; flex:1; min-width:0; }
+.search-row .mini-btn.icon-btn{ flex:0 0 46px; width:46px; padding:0; border-radius:10px; font-size:19px; }
+.sheet-tabs{
+  display:flex; gap:4px; padding:4px; margin-bottom:14px;
+  background: var(--card); border:1.5px solid var(--line); border-radius:12px;
+}
+.sheet-tabs button{
+  flex:1; border:none; background:transparent; border-radius:9px; padding:11px 6px;
+  font-family:'Space Grotesk',sans-serif; font-size:14.5px; font-weight:600;
+  color: var(--ink-soft); cursor:pointer;
+}
+.sheet-tabs button.active{ background: var(--total-bg); color: var(--total-text); font-weight:700; }
+.mini-btn:hover{ border-color: var(--ink); color: var(--ink);}
+
+#toast{
+  position:fixed; bottom: 92px; left:50%; transform: translateX(-50%) translateY(20px);
+  opacity:0; pointer-events:none;
+  background: var(--ink); color: var(--paper); padding: 11px 19px; border-radius: 30px;
+  font-family:'JetBrains Mono',monospace; font-size:14px; z-index:15;
+  transition: transform .25s ease, opacity .25s ease;
+  max-width: 88vw; text-align:center;
+  display:flex; align-items:center; justify-content:center; gap:12px;
+}
+#toast.show{ transform: translateX(-50%) translateY(0); opacity:1; pointer-events:auto;}
+
+.photo{ cursor:pointer; }
+.photo .zoom-hint{
+  position:absolute; bottom:6px; right:6px; z-index:2;
+  background: rgba(0,0,0,.5); color:#fff; border-radius:50%;
+  width:20px; height:20px; display:flex; align-items:center; justify-content:center;
+  font-size:11px; pointer-events:none;
+}
+@media(max-width:640px){ .photo .zoom-hint{ width:16px; height:16px; font-size:9px; bottom:4px; right:4px;} }
+
+.lightbox{
+  position:fixed; inset:0; z-index:60; background: rgba(0,0,0,.92);
+  display:none; align-items:center; justify-content:center; padding:20px;
+}
+.lightbox.show{ display:flex; }
+.lightbox img{ max-width:100%; max-height:100%; object-fit:contain; border-radius:8px; }
+.lightbox-close{
+  position:fixed; top: calc(14px + env(safe-area-inset-top)); right:14px; z-index:61;
+  width:40px; height:40px; border-radius:50%; border:none;
+  background: rgba(255,255,255,.15); color:#fff; font-size:20px; line-height:1;
+  display:flex; align-items:center; justify-content:center; cursor:pointer;
+}
+.lightbox-close:hover, .lightbox-close:active{ background: rgba(255,255,255,.3); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="title-row">
+    <div class="brand">
+      <img src="icon-192.png" alt="" class="brand-icon">
+      <div class="brand-text">
+        <h1>Fechamento</h1>
+        <div class="h-sub" id="hSub">calçados a adquirir</div>
+      </div>
+    </div>
+    <div class="count-pill" id="countPill">0 itens</div>
+  </div>
+  <div class="search-row">
+  <div class="searchbar">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" id="searchInput" placeholder="Buscar por código, cor ou comentário...">
+  </div>
+    <button class="mini-btn icon-btn" id="settingsBtn" title="Configurações" aria-label="Configurações">⚙</button>
+    <input type="file" id="importFile" accept=".json" style="display:none">
+  </div>
+  <div class="week-bar-wrap">
+    <div class="week-bar" id="weekBar"></div>
+    <button class="week-manage-btn" id="weekManageBtn" title="Renomear ou excluir semanas">⚙ Gerenciar</button>
+  </div>
+</header>
+
+<main>
+  <div class="grid" id="grid"></div>
+</main>
+
+<button class="fab" id="fabAdd" aria-label="Adicionar sapato ou ver estoque">+</button>
+
+<nav class="tabs">
+  <button data-cat="todos" class="active">Todos</button>
+  <button data-cat="basquete">Basquete</button>
+  <button data-cat="bota">Bota</button>
+  <button data-cat="plataforma">Plataforma</button>
+</nav>
+
+<div class="overlay" id="overlay">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-tabs" id="formTabs">
+      <button type="button" data-tab="stock">📦 Estoque</button>
+      <button type="button" data-tab="new" class="active">+ Novo sapato</button>
+    </div>
+    <h2 id="formTitle">Adicionar sapato</h2>
+    <form id="itemForm">
+      <input type="hidden" id="editId">
+      <div class="field" id="catalogField">
+        <label>Já tem esse sapato cadastrado?</label>
+        <div class="catalog-wrap">
+          <input type="text" id="catalogSearch" autocomplete="off" placeholder="Buscar por código ou cor...">
+          <div class="catalog-results" id="catalogResults"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Categoria</label>
+        <div class="cat-choice" id="catChoice">
+          <button type="button" data-cat="basquete">🏀 Basquete</button>
+          <button type="button" data-cat="bota">👢 Bota</button>
+          <button type="button" data-cat="plataforma">⬆ Plataforma</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>Semana / Pasta</label>
+        <select id="fSemana" required>
+          <option value="" disabled selected>Selecione uma semana</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Foto</label>
+        <label class="photo-input" id="photoLabel">
+          <img id="photoPreview" style="display:none;">
+          <span id="photoText">Toque para escolher uma foto</span>
+          <input type="file" accept="image/*" id="photoFile">
+        </label>
+      </div>
+      <div class="field">
+        <label>Código</label>
+        <input type="text" id="fCodigo" placeholder="ex: CT00010007" required>
+      </div>
+      <div class="field">
+        <label>Cor</label>
+        <input type="text" id="fCor" placeholder="ex: Preto/Vermelho">
+      </div>
+      <div class="field-row" id="singleSizeField">
+        <div class="field">
+          <label>Numeração</label>
+          <input type="number" id="fNum" step="any" inputmode="decimal" placeholder="ex: 38 ou 4.5">
+        </div>
+        <div class="field">
+          <label>Quantidade que preciso</label>
+          <input type="number" id="fQtd" min="0" placeholder="ex: 1">
+        </div>
+      </div>
+      <div class="field" id="singleObsField">
+        <label>Comentário (opcional)</label>
+        <div class="row-note-wrap" style="margin:0;">
+          <input type="text" id="fObs" placeholder="ex: separar pra cliente X">
+          <div class="color-swatches" id="fObsColorSwatches"></div>
+        </div>
+      </div>
+      <div class="field" id="multiSizesField">
+        <label>Numerações e quantidades</label>
+        <div id="sizeRows"></div>
+        <button type="button" class="add-size-chip" id="addSizeRowBtn" style="margin-top:2px;">+ Adicionar numeração</button>
+      </div>
+      <div class="field" style="margin-top: 10px; margin-bottom: 20px;">
+        <label class="field-checkbox">
+          <input type="checkbox" id="fFechamento">
+          Marcar como Fechamento ⚠️
+        </label>
+      </div>
+      <div class="field" id="addToStockField" style="margin-top: -10px; margin-bottom: 20px;">
+        <label class="field-checkbox">
+          <input type="checkbox" id="fAddToStock" checked>
+          Também salvar no Estoque 📦
+        </label>
+      </div>
+      <div class="sheet-actions">
+        <button type="button" class="btn btn-secondary" id="cancelBtn">Cancelar</button>
+        <button type="submit" class="btn btn-primary" id="saveBtn">Salvar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="overlay" id="weekOverlay">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <h2>🗂 Semanas / Pastas</h2>
+    <div id="weekManageList" style="margin-top:6px; max-height:50vh; overflow-y:auto; border:1.5px solid var(--line); border-radius:10px;"></div>
+    <div class="sheet-actions" style="margin-top:14px;">
+      <button type="button" class="btn btn-secondary" id="weekOverlayCloseBtn">Fechar</button>
+      <button type="button" class="btn btn-primary" id="weekAddBtn">+ Nova semana</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="stockOverlay">
+  <div class="sheet stock-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-tabs">
+      <button type="button" data-tab="stock" class="active">📦 Estoque</button>
+      <button type="button" data-tab="new">+ Novo sapato</button>
+    </div>
+    <div class="cat-choice compact" id="stockCatFilter" style="margin-bottom:10px;">
+      <button type="button" class="sel" data-cat="todos">Todos</button>
+      <button type="button" data-cat="basquete">🏀 Basq.</button>
+      <button type="button" data-cat="bota">👢 Bota</button>
+      <button type="button" data-cat="plataforma">⬆ Plat.</button>
+    </div>
+    <div class="field catalog-wrap">
+      <input type="text" id="stockSearch" autocomplete="off" placeholder="Buscar por código ou cor...">
+    </div>
+    <div id="stockList" style="margin-top:10px; overflow-y:auto; border:1.5px solid var(--line); border-radius:10px;"></div>
+    <div class="sheet-actions" style="margin-top:14px;">
+      <button type="button" class="btn btn-secondary" id="stockCloseBtn">Fechar</button>
+      <button type="button" class="btn btn-primary" id="stockAddNewBtn">+ Novo no estoque</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="catalogOverlay">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <h2 id="catalogFormTitle">Novo no estoque</h2>
+    <form id="catalogForm">
+      <div class="field">
+        <label>Categoria</label>
+        <div class="cat-choice" id="catalogCatChoice">
+          <button type="button" data-cat="basquete">🏀 Basquete</button>
+          <button type="button" data-cat="bota">👢 Bota</button>
+          <button type="button" data-cat="plataforma">⬆ Plataforma</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>Foto</label>
+        <label class="photo-input big">
+          <img id="catalogPhotoPreview" style="display:none;">
+          <span id="catalogPhotoText">Toque para escolher uma foto</span>
+          <input type="file" accept="image/*" id="catalogPhotoFile">
+        </label>
+      </div>
+      <div class="field">
+        <label>Código</label>
+        <input type="text" id="cCodigo" placeholder="ex: CT00010007" required>
+      </div>
+      <div class="field">
+        <label>Cor</label>
+        <input type="text" id="cCor" placeholder="ex: Preto/Vermelho">
+      </div>
+      <div class="sheet-actions">
+        <button type="button" class="btn btn-secondary" id="catalogCancelBtn">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Salvar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="overlay" id="settingsOverlay">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <h2>⚙ Configurações</h2>
+    <div class="field">
+      <label>Backup</label>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <button type="button" class="mini-btn" id="exportBtn" style="padding:12px;">⬇ Exportar JSON (lista + estoque)</button>
+        <button type="button" class="mini-btn" id="importBtn" style="padding:12px;">⬆ Importar JSON</button>
+      </div>
+    </div>
+    <div class="sheet-actions" style="margin-top:6px;">
+      <button type="button" class="btn btn-secondary" id="settingsCloseBtn">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay overlay-center" id="confirmOverlay">
+  <div class="sheet confirm-dialog" style="max-width:400px;">
+    <h2 id="confirmTitle">Confirmar</h2>
+    <p id="confirmMessage" style="color:var(--ink-soft); font-size:14.5px; line-height:1.5; margin:0 0 18px;"></p>
+    <div class="sheet-actions">
+      <button type="button" class="btn btn-secondary" id="confirmCancelBtn">Cancelar</button>
+      <button type="button" class="btn btn-primary" id="confirmOkBtn" style="background:var(--danger);">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<div id="lightbox" class="lightbox">
+  <button type="button" class="lightbox-close" id="lightboxCloseBtn" aria-label="Fechar imagem">✕</button>
+  <img id="lightboxImg" src="" alt="">
+</div>
+
+<div id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+let DATA = [];
+function newId(){
+  return (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : ('id_' + Date.now() + '_' + Math.random().toString(36).slice(2));
+}
+let currentCat = localStorage.getItem('currentCat') || 'todos';
+
+// Ordem manual dos cards (arrastar e soltar, tipo ícones de app na tela
+// inicial do celular). Guarda a sequência de "chaves" de card (categoria
+// + código + semana) na ordem que o usuário escolheu.
+let CARD_ORDER = [];
+try{ CARD_ORDER = JSON.parse(localStorage.getItem('cardOrder') || '[]'); }catch(e){ CARD_ORDER = []; }
+function saveCardOrder(){
+  try{ localStorage.setItem('cardOrder', JSON.stringify(CARD_ORDER)); }catch(e){}
+}
+let editingId = null;
+let editingGroupKey = null;
+let photoDataUrl = "";
+let db;
+
+// ============================================================
+// SEMANAS / PASTAS — organiza a lista igual às pastas semanais da fábrica.
+// A lista de semanas fica salva no navegador (localStorage); cada sapato
+// guarda a que semana pertence no campo `semana`.
+// ============================================================
+let WEEKS = [];
+try{ WEEKS = JSON.parse(localStorage.getItem('weekFolders') || '[]'); }catch(e){ WEEKS = []; }
+let currentWeek = localStorage.getItem('currentWeek') || 'todas';
+if(currentWeek === '') currentWeek = 'todas';
+
+// Grava a semana/pasta selecionada, pra ela continuar marcada mesmo
+// depois de fechar e abrir o app de novo.
+function persistCurrentWeek(){
+  try{ localStorage.setItem('currentWeek', currentWeek); }catch(e){}
+}
+
+function saveWeeks(){
+  localStorage.setItem('weekFolders', JSON.stringify(WEEKS));
+}
+
+// Garante que toda semana já usada em algum sapato apareça na lista de
+// pastas, mesmo que tenha vindo de uma importação de JSON.
+function syncWeeksFromData(){
+  const set = new Set(WEEKS);
+  DATA.forEach(d => { if(d.semana) set.add(d.semana); });
+  const merged = Array.from(set);
+  if(merged.length !== WEEKS.length || merged.some((w,i)=> w!==WEEKS[i])){
+    WEEKS = merged;
+    saveWeeks();
+  }
+}
+
+// Chave de agrupamento dos cards: mesmo código só vira o mesmo card se
+// também for da mesma categoria e da mesma semana/pasta.
+function groupKey(item){
+  return item.categoria + '|' + (item.codigo||'').trim().toUpperCase() + '|' + (item.semana||'');
+}
+
+const initialData = [{"id": 1, "categoria": "basquete", "codigo": "CT00010007", "cor": "Preto/Vermelho", "numeracao": 41, "quantidade": 1, "foto": "", "fechamento": false}, {"id": 2, "categoria": "basquete", "codigo": "CT35240002", "cor": "Vinho/Preto/Branco", "numeracao": 35, "quantidade": 1, "foto": "", "fechamento": false}, {"id": 3, "categoria": "basquete", "codigo": "CT34120004", "cor": "Terra Molhada Preto/Branco", "numeracao": 37, "quantidade": 1, "foto": "", "fechamento": false}, {"id": 4, "categoria": "basquete", "codigo": "CT04200003", "cor": "Verde Oliva Preto/Branco", "numeracao": 36, "quantidade": 1, "foto": "", "fechamento": false}, {"id": 5, "categoria": "basquete", "codigo": "CT00010008", "cor": "Bordo/Preto/Branco", "numeracao": 35, "quantidade": 1, "foto": "", "fechamento": false}, {"id": 6, "categoria": "basquete", "codigo": "CT00010008", "cor": "Bordo/Preto/Branco", "numeracao": 36, "quantidade": 1, "foto": "", "fechamento": false}, {"id": 7, "categoria": "basquete", "codigo": "CT00010008", "cor": "Bordo/Preto/Branco", "numeracao": 37, "quantidade": 1, "foto": "", "fechamento": false}, {"id": 8, "categoria": "basquete", "codigo": "CT00010001", "cor": "Branco/Marinho", "numeracao": 35, "quantidade": 5, "foto": "", "fechamento": false}, {"id": 9, "categoria": "basquete", "codigo": "CT00010001", "cor": "Branco/Marinho", "numeracao": 36, "quantidade": 3, "foto": "", "fechamento": false}, {"id": 10, "categoria": "basquete", "codigo": "CT00010001", "cor": "Branco/Marinho", "numeracao": 37, "quantidade": 4, "foto": "", "fechamento": false}, {"id": 11, "categoria": "basquete", "codigo": "CT00010001", "cor": "Branco/Marinho", "numeracao": 38, "quantidade": 8, "foto": "", "fechamento": false}, {"id": 12, "categoria": "basquete", "codigo": "CT00010001", "cor": "Branco/Marinho", "numeracao": 39, "quantidade": 3, "foto": "", "fechamento": false}, {"id": 13, "categoria": "basquete", "codigo": "CT00010001", "cor": "Branco/Marinho", "numeracao": 40, "quantidade": 2, "foto": "", "fechamento": false}, {"id": 14, "categoria": "basquete", "codigo": "CT00010001", "cor": "Branco/Marinho", "numeracao": 41, "quantidade": 2, "foto": "", "fechamento": false}, {"id": 15, "categoria": "basquete", "codigo": "CT33510003", "cor": "Café com Leite/Amêndoa", "numeracao": 35, "quantidade": 1, "foto": "", "fechamento": false}, {"id": 16, "categoria": "basquete", "codigo": "CT33510003", "cor": "Café com Leite/Amêndoa", "numeracao": 37, "quantidade": 1, "foto": "", "fechamento": false}, {"id": 17, "categoria": "basquete", "codigo": "CT35060003", "cor": "Marrom Ferrugem/Marfim", "numeracao": 33, "quantidade": 1, "foto": "", "fechamento": false}, {"id": 18, "categoria": "basquete", "codigo": "CT35060003", "cor": "Marrom Ferrugem/Marfim", "numeracao": 35, "quantidade": 1, "foto": "", "fechamento": false}, {"id": 19, "categoria": "basquete", "codigo": "CT35060004", "cor": "Ouro Enferrujado", "numeracao": 36, "quantidade": 1, "foto": "", "fechamento": false}, {"id": 20, "categoria": "basquete", "codigo": "CT35060002", "cor": "Castanha Clara/Marfim", "numeracao": 35, "quantidade": 1, "foto": "", "fechamento": false}, {"id": 21, "categoria": "basquete", "codigo": "CT35060002", "cor": "Castanha Clara/Marfim", "numeracao": 36, "quantidade": 1, "foto": "", "fechamento": false}, {"id": 22, "categoria": "basquete", "codigo": "CT35060002", "cor": "Castanha Clara/Marfim", "numeracao": 38, "quantidade": 1, "foto": "", "fechamento": false}, {"id": 23, "categoria": "basquete", "codigo": "CT04460002", "cor": "Preto/Preto", "numeracao": 35, "quantidade": 1, "foto": "", "fechamento": false}, {"id": 24, "categoria": "basquete", "codigo": "CT04460002", "cor": "Preto/Preto", "numeracao": 36, "quantidade": 2, "foto": "", "fechamento": false}, {"id": 25, "categoria": "basquete", "codigo": "CT04460002", "cor": "Preto/Preto", "numeracao": 37, "quantidade": 1, "foto": "", "fechamento": false}, {"id": 26, "categoria": "bota", "codigo": "CK16050002", "cor": "Rosa Creme/Ouro Claro", "numeracao": 36, "quantidade": 1, "foto": "", "fechamento": false}, {"id": 27, "categoria": "bota", "codigo": "CT34990001", "cor": "Castanha Clara/Ouro Claro", "numeracao": 36, "quantidade": 2, "foto": "", "fechamento": false}, {"id": 28, "categoria": "bota", "codigo": "CT04510001", "cor": "Branco/Vermelho", "numeracao": 35, "quantidade": 1, "foto": "", "fechamento": false}, {"id": 29, "categoria": "bota", "codigo": "CT04510001", "cor": "Branco/Vermelho", "numeracao": 36, "quantidade": 1, "foto": "", "fechamento": false}, {"id": 30, "categoria": "plataforma", "codigo": "CT34900002", "cor": "Branco/Ouro Claro", "numeracao": 36, "quantidade": 3, "foto": "", "fechamento": false}];
+
+let CATALOG = [];
+
+function catalogKey(categoria, codigo){
+  return (categoria||'') + '|' + (codigo||'').trim().toUpperCase();
+}
+
+// ============================================================
+// MODO NUVEM (Supabase) — para vários usuários editarem juntos.
+// Preencha SUPABASE_URL e SUPABASE_ANON_KEY e troque CLOUD_ENABLED
+// para true. Enquanto CLOUD_ENABLED for false, o app funciona
+// normalmente salvando só neste aparelho/navegador (modo local).
+// ============================================================
+const CLOUD_ENABLED = false;
+const SUPABASE_URL = 'https://hfoewuyrrsydrcclmcnx.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhmb2V3dXlycnN5ZHJjY2xtY254Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3NjAxNTcsImV4cCI6MjEwMDMzNjE1N30.w5KHGmXt2yUR09rsi0Gdjs7_b610zYg0MFKaXtVYYg8';
+
+let CLOUD_MODE = false;
+let supa = null;
+if(CLOUD_ENABLED && SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase){
+  CLOUD_MODE = true;
+  // Desativa a persistência/auto-refresh de sessão de autenticação: o app
+  // não usa login, e esse recurso é o que causa o erro
+  // "DataCloneError ... Headers object could not be cloned" em alguns navegadores.
+  supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+      detectSessionInUrl: false
+    }
+  });
+}
+
+function itemToRow(item){
+  return {
+    id: item.id,
+    categoria: item.categoria,
+    codigo: item.codigo,
+    cor: item.cor,
+    numeracao: item.numeracao,
+    quantidade: item.quantidade,
+    foto: item.foto || '',
+    fechamento: !!item.fechamento,
+    ja_fechado: !!item.jaFechado,
+    semana: item.semana || '',
+    obs: item.obs || '',
+    obs_color: item.obsColor || ''
+  };
+}
+function rowToItem(row){
+  return {
+    id: row.id,
+    categoria: row.categoria,
+    codigo: row.codigo,
+    cor: row.cor,
+    numeracao: row.numeracao,
+    quantidade: row.quantidade,
+    foto: row.foto || '',
+    fechamento: !!row.fechamento,
+    jaFechado: !!row.ja_fechado,
+    semana: row.semana || '',
+    obs: row.obs || '',
+    obsColor: row.obs_color || ''
+  };
+}
+
+if(CLOUD_MODE){
+  loadFromDB();
+  loadCatalogFromDB();
+  // Como vários usuários editam ao mesmo tempo, atualiza periodicamente
+  // pra puxar o que outras pessoas mudaram.
+  setInterval(()=>{ loadFromDB(); loadCatalogFromDB(); }, 6000);
+} else {
+  const requestDB = indexedDB.open("CalcadosDB", 5);
+  requestDB.onupgradeneeded = function(e) {
+    db = e.target.result;
+    const tx = e.target.transaction;
+    const isNewShoesStore = !db.objectStoreNames.contains('shoes');
+    let shoesStore;
+    if(isNewShoesStore) {
+      shoesStore = db.createObjectStore('shoes', {keyPath: 'id'});
+      initialData.forEach(d => shoesStore.add(d));
+    } else {
+      // Loja já existe: NUNCA apagar os sapatos já cadastrados do usuário aqui.
+      shoesStore = tx.objectStore('shoes');
+    }
+
+    if(!db.objectStoreNames.contains('catalog')) {
+      const catalogStore = db.createObjectStore('catalog', {keyPath: 'id'});
+      if(isNewShoesStore){
+        // Instalação nova: semeia o estoque a partir dos dados de exemplo.
+        const seen = {};
+        initialData.forEach(d => {
+          const key = catalogKey(d.categoria, d.codigo);
+          if(!seen[key]){
+            seen[key] = true;
+            catalogStore.add({ id:key, categoria:d.categoria, codigo:d.codigo, cor:d.cor||'', foto:d.foto||'' });
+          }
+        });
+      } else {
+        // Usuário existente: migra os sapatos que já tem na lista para o novo estoque,
+        // assim nada que já foi cadastrado se perde.
+        const getAllReq = shoesStore.getAll();
+        getAllReq.onsuccess = function(){
+          const seen = {};
+          getAllReq.result.forEach(d => {
+            const key = catalogKey(d.categoria, d.codigo);
+            if(!seen[key]){
+              seen[key] = true;
+              catalogStore.put({ id:key, categoria:d.categoria, codigo:d.codigo, cor:d.cor||'', foto:d.foto||'' });
+            }
+          });
+        };
+      }
+    }
+  };
+  requestDB.onsuccess = function(e) {
+    db = e.target.result;
+    loadFromDB();
+    loadCatalogFromDB();
+  };
+  requestDB.onerror = function(e) {
+    toast('Não foi possível acessar o armazenamento do dispositivo. Se estiver em aba anônima/privada, saia dela e tente de novo.');
+  };
+  requestDB.onblocked = function(e) {
+    toast('Feche outras abas com este app abertas e tente novamente.');
+  };
+}
+
+function loadFromDB() {
+  if(CLOUD_MODE){
+    supa.from('shoes').select('*').then(({data, error})=>{
+      if(error){ toast('Erro ao carregar da nuvem: ' + error.message); return; }
+      DATA = (data||[]).map(rowToItem);
+      render();
+    });
+    return;
+  }
+  const tx = db.transaction('shoes', 'readonly');
+  const store = tx.objectStore('shoes');
+  const req = store.getAll();
+  req.onsuccess = function() {
+    DATA = req.result;
+    render();
+  };
+}
+
+function saveToDB(item) {
+  if(CLOUD_MODE){
+    supa.from('shoes').upsert(itemToRow(item)).then(({error})=>{
+      if(error) toast('Erro ao salvar na nuvem: ' + error.message);
+    });
+    return;
+  }
+  const tx = db.transaction('shoes', 'readwrite');
+  tx.onerror = function(e){
+    toast('Erro ao salvar no dispositivo: ' + (e.target.error ? e.target.error.message : 'tente uma foto menor.'));
+  };
+  tx.objectStore('shoes').put(item);
+}
+
+function deleteFromDB(id) {
+  if(CLOUD_MODE){
+    supa.from('shoes').delete().eq('id', id).then(({error})=>{
+      if(error) toast('Erro ao excluir na nuvem: ' + error.message);
+    });
+    return;
+  }
+  const tx = db.transaction('shoes', 'readwrite');
+  tx.objectStore('shoes').delete(id);
+}
+
+function loadCatalogFromDB() {
+  if(CLOUD_MODE){
+    supa.from('catalog').select('*').then(({data, error})=>{
+      if(error){ toast('Erro ao carregar estoque da nuvem: ' + error.message); return; }
+      CATALOG = (data||[]).map(r => ({ id:r.id, categoria:r.categoria, codigo:r.codigo, cor:r.cor||'', foto:r.foto||'' }));
+    });
+    return;
+  }
+  const tx = db.transaction('catalog', 'readonly');
+  const req = tx.objectStore('catalog').getAll();
+  req.onsuccess = function() {
+    CATALOG = req.result;
+  };
+}
+
+function saveCatalogEntry(entry) {
+  const idx = CATALOG.findIndex(c => c.id === entry.id);
+  if(idx >= 0) CATALOG[idx] = entry; else CATALOG.push(entry);
+  if(CLOUD_MODE){
+    supa.from('catalog').upsert(entry).then(({error})=>{
+      if(error) toast('Erro ao salvar estoque na nuvem: ' + error.message);
+    });
+    return;
+  }
+  const tx = db.transaction('catalog', 'readwrite');
+  tx.onerror = function(e){
+    toast('Erro ao salvar no estoque: ' + (e.target.error ? e.target.error.message : 'tente uma foto menor.'));
+  };
+  tx.objectStore('catalog').put(entry);
+}
+
+function deleteCatalogEntry(id) {
+  CATALOG = CATALOG.filter(c => c.id !== id);
+  if(CLOUD_MODE){
+    supa.from('catalog').delete().eq('id', id).then(({error})=>{
+      if(error) toast('Erro ao excluir do estoque na nuvem: ' + error.message);
+    });
+    return;
+  }
+  const tx = db.transaction('catalog', 'readwrite');
+  tx.objectStore('catalog').delete(id);
+}
+
+// Toda vez que um sapato é salvo na lista de compras, o cadastro (código,
+// cor, categoria, foto) também é guardado no estoque — que não é apagado
+// quando o item é removido da lista de compras.
+function upsertCatalogFromItem(payload, codigo){
+  const key = catalogKey(payload.categoria, codigo);
+  const existing = CATALOG.find(c => c.id === key);
+  saveCatalogEntry({
+    id: key,
+    categoria: payload.categoria,
+    codigo: codigo,
+    cor: payload.cor || (existing ? existing.cor : ''),
+    foto: payload.foto || (existing ? existing.foto : '')
+  });
+}
+
+// Quando você corrige cor/foto de um sapato na lista, atualiza também o
+// cadastro dele no Estoque (se ele já existir lá).
+function syncCatalogFromItem(payload, codigo){
+  const key = catalogKey(payload.categoria, codigo);
+  const existing = CATALOG.find(c => c.id === key);
+  if(!existing) return;
+  saveCatalogEntry({
+    id: key,
+    categoria: existing.categoria,
+    codigo: existing.codigo,
+    cor: payload.cor || existing.cor,
+    foto: payload.foto || existing.foto
+  });
+}
+
+const CAT_LABEL = { basquete:"Basquete", bota:"Bota", plataforma:"Plataforma", todos:"Todos" };
+const CAT_ORDER_INDEX = { basquete:0, bota:1, plataforma:2 };
+
+// Paleta de cores usada pra destacar comentários em numerações específicas.
+const OBS_COLORS = ['#f2c94c', '#eb5757', '#27ae60', '#2f80ed', '#9b51e0'];
+
+function buildColorSwatches(container, selected, onSelect){
+  container.innerHTML = '';
+  const options = ['', ...OBS_COLORS];
+  options.forEach(color => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'swatch' + (color === (selected||'') ? ' sel' : '');
+    btn.dataset.color = color;
+    if(color) btn.style.background = color;
+    btn.addEventListener('click', ()=>{
+      [...container.children].forEach(c => c.classList.remove('sel'));
+      btn.classList.add('sel');
+      onSelect(color);
+    });
+    container.appendChild(btn);
+  });
+}
+const main = document.querySelector('main');
+const grid = document.getElementById('grid');
+const searchInput = document.getElementById('searchInput');
+const hSub = document.getElementById('hSub');
+const countPill = document.getElementById('countPill');
+
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(()=> t.classList.remove('show'), 2000);
+}
+
+function hideToast(){
+  const t = document.getElementById('toast');
+  clearTimeout(t._timer);
+  t.classList.remove('show');
+}
+
+// Remove os itens da lista de compras (chamado só depois de confirmação).
+function deleteItems(items, message){
+  DATA = DATA.filter(d => !items.some(it => it.id === d.id));
+  items.forEach(item => deleteFromDB(item.id));
+  render();
+  toast(message);
+}
+
+function iconFor(cat){ return {basquete:'🏀', bota:'👢', plataforma:'⬆'}[cat] || '👟'; }
+
+// Escreve a quantidade por extenso: "1 par", "2 pares", "3 pares"...
+function parLabel(qtd){
+  const n = Number(qtd) || 0;
+  return n + (n === 1 ? ' par' : ' pares');
+}
+
+function groupItems(list){
+  const groups = [];
+  const index = {};
+  list.forEach(item => {
+    const key = groupKey(item);
+    if(!(key in index)){
+      index[key] = groups.length;
+      groups.push({
+        key,
+        categoria: item.categoria,
+        codigo: item.codigo,
+        cor: item.cor,
+        foto: item.foto,
+        fechamento: item.fechamento,
+        semana: item.semana || '',
+        rows: []
+      });
+    }
+    const g = groups[index[key]];
+    g.rows.push(item);
+    if(!g.foto && item.foto) g.foto = item.foto;
+    if(!g.cor && item.cor) g.cor = item.cor;
+    if(item.fechamento) g.fechamento = true; 
+  });
+  return groups;
+}
+
+function render(){
+  syncWeeksFromData();
+
+  const term = searchInput.value.toLowerCase().trim();
+  let list = DATA.filter(d =>
+    (currentCat === 'todos' || d.categoria === currentCat) &&
+    (currentWeek === 'todas' || (d.semana||'') === currentWeek)
+  );
+  if(term){
+    list = list.filter(d =>
+      (d.codigo||'').toLowerCase().includes(term) ||
+      (d.cor||'').toLowerCase().includes(term) ||
+      String(d.numeracao||'').includes(term) ||
+      (d.obs||'').toLowerCase().includes(term)
+    );
+  }
+
+  const groups = groupItems(list).sort((a,b) => {
+    const ai = CARD_ORDER.indexOf(a.key);
+    const bi = CARD_ORDER.indexOf(b.key);
+    if(ai !== -1 || bi !== -1){
+      // Cards que o usuário já reorganizou manualmente vêm primeiro,
+      // respeitando a posição em que ele os deixou.
+      if(ai === -1) return 1;
+      if(bi === -1) return -1;
+      return ai - bi;
+    }
+    // Sem ordem manual ainda pra esses dois: Fechamento tem prioridade
+    // máxima, depois a ordem padrão de categoria.
+    if(a.fechamento !== b.fechamento) return a.fechamento ? -1 : 1;
+    return (CAT_ORDER_INDEX[a.categoria] ?? 99) - (CAT_ORDER_INDEX[b.categoria] ?? 99);
+  });
+
+  grid.innerHTML = '';
+  if(groups.length === 0){
+    grid.innerHTML = '<div class="empty">Nenhum sapato aqui ainda.<br>Toque no botão + para adicionar.</div>';
+  } else {
+    const frag = document.createDocumentFragment();
+    groups.forEach(g => {
+      const totalGroup = g.rows.reduce((s,r)=> s + (Number(r.quantidade)||0), 0);
+      const sizeChips = g.rows
+        .sort((a,b)=> (Number(a.numeracao)||0) - (Number(b.numeracao)||0))
+        .map(r => `
+          <span class="size-chip ${r.obsColor ? 'has-obs' : ''}" data-editid="${r.id}" ${r.obsColor ? `style="border-left-color:${r.obsColor}"` : ''} ${r.obs ? `title="${r.obs.replace(/"/g,'&quot;')}"` : ''}>
+            <span class="size-chip-label">
+              <span class="size-chip-num">Nº${r.numeracao ?? '—'}</span>
+              <span class="size-chip-qtd">${parLabel(r.quantidade)}</span>
+              ${r.obs ? `<span class="size-chip-obs" style="color:${r.obsColor || 'var(--ink-soft)'}">${r.obs}</span>` : ''}
+            </span>
+            <span class="x" data-delid="${r.id}">✕</span>
+          </span>
+        `).join('');
+
+      const el = document.createElement('div');
+      el.className = `card ${g.fechamento ? 'fechamento' : ''}`;
+      el.dataset.groupkey = g.key;
+      el.innerHTML = `
+        <div class="photo">
+          <div class="fechamento-badge">⚠️</div>
+          <span class="cat-tag ${g.categoria}">${CAT_LABEL[g.categoria]}</span>
+          ${g.foto ? `<img src="${g.foto}" alt="${g.codigo}"><span class="zoom-hint">🔍</span>` : `<span class="ph-icon">${iconFor(g.categoria)}</span>`}
+        </div>
+        <div class="card-body">
+          <div class="codigo">${g.codigo||'—'}</div>
+          <div class="cor">${g.cor||''}</div>
+          ${(currentWeek === 'todas' && g.semana) ? `<div class="week-tag-body">🗂 ${g.semana}</div>` : ''}
+          <div class="sizes-head">
+            <span>Numerações</span>
+            <span class="total-chip">${parLabel(totalGroup)} total</span>
+          </div>
+          <div class="size-list">
+            ${sizeChips}
+            <button type="button" class="add-size-chip" data-addcat="${g.categoria}" data-addcodigo="${g.codigo}" data-addcor="${g.cor||''}" data-addfoto="${g.foto||''}" data-addfechamento="${g.fechamento}" data-addsemana="${g.semana||''}">+ nº</button>
+          </div>
+        </div>
+        <div class="card-actions">
+          <button class="fechar-btn" data-fechamentocode="${g.key}">⚠️<span class="btn-label"> Fechamento</span></button>
+          <button class="edit" data-editcode="${g.key}">✎<span class="btn-label"> Editar</span></button>
+          <button class="del" data-delcode="${g.key}">🗑<span class="btn-label"> Excluir</span></button>
+        </div>
+      `;
+      frag.appendChild(el);
+    });
+    grid.appendChild(frag);
+  }
+
+  const totalItens = groups.length;
+  const totalPares = list.reduce((s,d)=> s + (Number(d.quantidade)||0), 0);
+  countPill.textContent = totalItens + (totalItens===1 ? ' código' : ' códigos') + ' · ' + totalPares + (totalPares===1?' par':' pares');
+  hSub.textContent = `${totalPares} par(es) a buscar` + (currentWeek === 'todas' ? ' nesta visão' : ` · ${currentWeek}`);
+
+  document.querySelectorAll('nav.tabs button').forEach(b=> b.classList.toggle('active', b.dataset.cat===currentCat));
+  renderWeekBar();
+}
+
+const weekBar = document.getElementById('weekBar');
+
+function renderWeekBar(){
+  const chips = [
+    { value:'todas', label:'Todas' },
+    ...WEEKS.map(w => ({ value:w, label:w }))
+  ];
+  weekBar.innerHTML = chips.map(c => `
+    <button type="button" class="week-chip ${currentWeek===c.value ? 'active':''}" data-week="${c.value}">${c.label}</button>
+  `).join('') + `<button type="button" class="week-chip add" id="weekAddChip">+ Nova semana</button>`;
+}
+
+function addNewWeek(){
+  const name = prompt('Nome da nova semana/pasta (ex: Semana 30, 21/07 a 27/07):');
+  if(!name) return null;
+  const trimmed = name.trim();
+  if(!trimmed) return null;
+  if(!WEEKS.includes(trimmed)){
+    WEEKS.push(trimmed);
+    saveWeeks();
+  }
+  return trimmed;
+}
+
+weekBar.addEventListener('click', (e)=>{
+  const addBtn = e.target.closest('#weekAddChip');
+  if(addBtn){
+    const created = addNewWeek();
+    if(created){ currentWeek = created; persistCurrentWeek(); render(); }
+    return;
+  }
+  const chip = e.target.closest('.week-chip[data-week]');
+  if(chip){
+    currentWeek = chip.dataset.week;
+    persistCurrentWeek();
+    render();
+  }
+});
+
+const weekOverlay = document.getElementById('weekOverlay');
+const weekManageList = document.getElementById('weekManageList');
+
+function renderWeekManageList(){
+  if(WEEKS.length === 0){
+    weekManageList.innerHTML = '<div class="catalog-empty">Nenhuma semana criada ainda.</div>';
+    return;
+  }
+  weekManageList.innerHTML = WEEKS.map(w => {
+    const count = DATA.filter(d => (d.semana||'') === w).length;
+    return `
+      <div class="catalog-item stock-row">
+        <div class="info">
+          <div class="cod">${w}</div>
+          <div class="c">${count} numeração(ões)</div>
+        </div>
+        <div class="stock-actions">
+          <button type="button" class="mini-btn icon-btn" data-renameweek="${w}" title="Renomear">✎</button>
+          <button type="button" class="mini-btn icon-btn" data-delweek="${w}" title="Excluir semana">🗑</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ============================================================
+// HISTÓRICO DE OVERLAYS — faz o botão "voltar" do celular fechar
+// só a janela aberta (formulário, imagem, estoque, semanas) em vez
+// de sair do app inteiro. Toda vez que uma janela abre, empurramos
+// um estado no histórico do navegador; o listener de 'popstate'
+// (disparado pelo botão voltar) é quem realmente esconde a janela.
+// Os botões de fechar do próprio app (X, Cancelar, tocar fora) usam
+// closeOverlayHistory(), que só chama history.back() — assim os dois
+// caminhos (botão físico e botão do app) sempre passam pelo mesmo lugar.
+// ============================================================
+const OVERLAY_CLOSERS = {
+  overlay: hideForm,
+  weekOverlay: () => weekOverlay.classList.remove('show'),
+  stockOverlay: () => stockOverlay.classList.remove('show'),
+  catalogOverlay: () => catalogOverlay.classList.remove('show'),
+  settingsOverlay: () => settingsOverlay.classList.remove('show'),
+  lightbox: () => lightbox.classList.remove('show'),
+  confirmOverlay: () => {
+    confirmOverlay.classList.remove('show');
+    if(confirmResolve){ const r = confirmResolve; confirmResolve = null; r(confirmPendingResult); }
+  }
+};
+
+let overlayStack = [];
+let replaceNextPush = false;   // true durante uma troca de janela (abas): troca a entrada do histórico em vez de empilhar
+let newFormPreserved = false;  // formulário "Novo sapato" escondido ao ir pra aba Estoque (mantém o que foi digitado)
+
+function openOverlayHistory(name){
+  overlayStack.push(name);
+  if(replaceNextPush){
+    replaceNextPush = false;
+    history.replaceState({ overlay: name }, '');
+  } else {
+    history.pushState({ overlay: name }, '');
+  }
+}
+
+function closeOverlayHistory(name){
+  if(overlayStack.length && overlayStack[overlayStack.length - 1] === name){
+    history.back();
+  } else if(OVERLAY_CLOSERS[name]){
+    // segurança: se por algum motivo esse overlay não está no topo do
+    // histórico, ao menos esconde ele na tela.
+    OVERLAY_CLOSERS[name]();
+    overlayStack = overlayStack.filter(n => n !== name);
+  }
+}
+
+// Troca uma janela por outra sem empilhar um passo extra no histórico
+// (ex: fechar o Estoque e já abrir o formulário de cadastro por cima).
+function switchOverlay(fromName, openFn, closeFn){
+  const wasTop = overlayStack.length && overlayStack[overlayStack.length - 1] === fromName;
+  if(wasTop) overlayStack.pop();
+  const closer = closeFn || OVERLAY_CLOSERS[fromName];
+  if(closer) closer();
+  replaceNextPush = !!wasTop;
+  try{ openFn(); } finally { replaceNextPush = false; }
+}
+
+window.addEventListener('popstate', ()=>{
+  const name = overlayStack.pop();
+  if(name && OVERLAY_CLOSERS[name]) OVERLAY_CLOSERS[name]();
+});
+
+document.getElementById('weekManageBtn').addEventListener('click', ()=>{
+  renderWeekManageList();
+  weekOverlay.classList.add('show');
+  openOverlayHistory('weekOverlay');
+});
+document.getElementById('weekOverlayCloseBtn').addEventListener('click', ()=> closeOverlayHistory('weekOverlay'));
+weekOverlay.addEventListener('click', (e)=>{ if(e.target === weekOverlay) closeOverlayHistory('weekOverlay'); });
+
+document.getElementById('weekAddBtn').addEventListener('click', ()=>{
+  addNewWeek();
+  renderWeekManageList();
+  renderWeekBar();
+});
+
+weekManageList.addEventListener('click', (e)=>{
+  const renameBtn = e.target.closest('[data-renameweek]');
+  if(renameBtn){
+    const oldName = renameBtn.dataset.renameweek;
+    const newName = prompt(`Novo nome para "${oldName}":`, oldName);
+    if(!newName) return;
+    const trimmed = newName.trim();
+    if(!trimmed || trimmed === oldName) return;
+    if(WEEKS.includes(trimmed)){
+      toast('Já existe uma semana com esse nome.');
+      return;
+    }
+    WEEKS = WEEKS.map(w => w === oldName ? trimmed : w);
+    saveWeeks();
+    // Isto só atualiza a etiqueta dos sapatos que já eram dessa semana —
+    // não move nada de uma semana para outra.
+    DATA.filter(d => (d.semana||'') === oldName).forEach(item => {
+      item.semana = trimmed;
+      saveToDB(item);
+    });
+    if(currentWeek === oldName){ currentWeek = trimmed; persistCurrentWeek(); }
+    renderWeekManageList();
+    render();
+    toast('Semana renomeada.');
+    return;
+  }
+  const delBtn = e.target.closest('[data-delweek]');
+  if(delBtn){
+    const name = delBtn.dataset.delweek;
+    const count = DATA.filter(d => (d.semana||'') === name).length;
+    if(count > 0){
+      toast(`Essa semana tem ${count} numeração(ões). Edite ou exclua esses sapatos primeiro.`);
+      return;
+    }
+    showConfirm(`Ela está vazia e será excluída da lista de semanas.`, `Excluir a semana "${name}"?`).then(ok=>{
+      if(!ok) return;
+      WEEKS = WEEKS.filter(w => w !== name);
+      saveWeeks();
+      if(currentWeek === name){ currentWeek = 'todas'; persistCurrentWeek(); }
+      renderWeekManageList();
+      render();
+      toast('Semana excluída.');
+    });
+  }
+});
+
+const CAT_ORDER = ['todos','basquete','bota','plataforma'];
+
+function setCategory(cat, direction){
+  currentCat = cat;
+  try{ localStorage.setItem('currentCat', cat); }catch(e){}
+  document.querySelectorAll('nav.tabs button').forEach(b=> b.classList.toggle('active', b.dataset.cat===cat));
+
+  if(direction){
+    grid.classList.add('swiping', direction === 'next' ? 'from-right' : 'from-left');
+    requestAnimationFrame(()=>{
+      render();
+      requestAnimationFrame(()=>{
+        grid.classList.remove('swiping','from-right','from-left');
+      });
+    });
+  } else {
+    render();
+  }
+}
+
+document.querySelectorAll('nav.tabs button').forEach(btn=>{
+  btn.addEventListener('click', ()=> setCategory(btn.dataset.cat));
+});
+
+searchInput.addEventListener('input', render);
+
+// ============================================================
+// REORDENAR CARDS — pressione e segure um card (fora dos botões/chips)
+// pra arrastá-lo pra outra posição, como os ícones de app na tela
+// inicial do celular. Funciona com toque e mouse (Pointer Events).
+// A ordem escolhida é salva no navegador e passa a valer sempre que
+// esse card aparecer (em qualquer aba/semana), até o usuário arrastar
+// de novo.
+// ============================================================
+const LONG_PRESS_MS = 420;
+const MOVE_CANCEL_PX = 10;
+let dragState = null;
+let longPressTimer = null;
+let suppressNextClick = false;
+
+grid.addEventListener('pointerdown', (e)=>{
+  if(e.pointerType === 'mouse' && e.button !== 0) return;
+  const card = e.target.closest('.card');
+  if(!card || card.classList.contains('card-placeholder')) return;
+  // Não inicia o arraste em cima de botões, chips ou campos — só na
+  // "área livre" do card (foto, código, cor etc.).
+  if(e.target.closest('button, input, .size-chip, .add-size-chip')) return;
+
+  const startX = e.clientX, startY = e.clientY;
+  const pointerId = e.pointerId;
+
+  clearTimeout(longPressTimer);
+  longPressTimer = setTimeout(()=>{
+    cleanup();
+    startDrag(card, pointerId, startX, startY);
+  }, LONG_PRESS_MS);
+
+  // Se o dedo se mover antes do toque longo completar, entendemos que é
+  // um gesto de rolagem normal — cancelamos nossa espera e deixamos o
+  // navegador rolar a página sozinho (comportamento nativo).
+  function cancelIfMoved(moveEvent){
+    if(moveEvent.pointerId !== pointerId) return;
+    if(Math.abs(moveEvent.clientX - startX) > MOVE_CANCEL_PX || Math.abs(moveEvent.clientY - startY) > MOVE_CANCEL_PX){
+      clearTimeout(longPressTimer);
+      cleanup();
+    }
+  }
+  function clearOnUp(){ clearTimeout(longPressTimer); cleanup(); }
+  function cleanup(){
+    grid.removeEventListener('pointermove', cancelIfMoved);
+    grid.removeEventListener('pointerup', clearOnUp);
+    grid.removeEventListener('pointercancel', clearOnUp);
+  }
+  grid.addEventListener('pointermove', cancelIfMoved);
+  grid.addEventListener('pointerup', clearOnUp);
+  grid.addEventListener('pointercancel', clearOnUp);
+});
+
+function startDrag(card, pointerId, startX, startY){
+  const rect = card.getBoundingClientRect();
+
+  const placeholder = document.createElement('div');
+  placeholder.className = 'card card-placeholder';
+  card.parentNode.insertBefore(placeholder, card.nextSibling);
+
+  dragState = { pointerId, card, placeholder, offsetX: startX - rect.left, offsetY: startY - rect.top };
+
+  card.style.width = rect.width + 'px';
+  card.style.height = rect.height + 'px';
+  card.style.left = rect.left + 'px';
+  card.style.top = rect.top + 'px';
+  card.classList.add('dragging-card');
+
+  try{ card.setPointerCapture(pointerId); }catch(err){}
+  if(navigator.vibrate) navigator.vibrate(25);
+
+  document.addEventListener('pointermove', onDragMove);
+  document.addEventListener('pointerup', onDragEnd);
+  document.addEventListener('pointercancel', onDragEnd);
+
+  suppressNextClick = true;
+}
+
+function onDragMove(e){
+  if(!dragState || e.pointerId !== dragState.pointerId) return;
+  e.preventDefault();
+  const { card, offsetX, offsetY, placeholder } = dragState;
+  card.style.left = (e.clientX - offsetX) + 'px';
+  card.style.top = (e.clientY - offsetY) + 'px';
+
+  card.style.visibility = 'hidden';
+  const elUnder = document.elementFromPoint(e.clientX, e.clientY);
+  card.style.visibility = '';
+  const target = elUnder ? elUnder.closest('.card') : null;
+  if(target && target !== card && target !== placeholder && grid.contains(target)){
+    const children = [...grid.children];
+    const phIndex = children.indexOf(placeholder);
+    const targetIndex = children.indexOf(target);
+    if(targetIndex < phIndex){
+      grid.insertBefore(placeholder, target);
+    } else {
+      grid.insertBefore(placeholder, target.nextSibling);
+    }
+  }
+}
+
+function onDragEnd(e){
+  if(!dragState || e.pointerId !== dragState.pointerId) return;
+  const { card, placeholder, pointerId } = dragState;
+  try{ card.releasePointerCapture(pointerId); }catch(err){}
+  document.removeEventListener('pointermove', onDragMove);
+  document.removeEventListener('pointerup', onDragEnd);
+  document.removeEventListener('pointercancel', onDragEnd);
+
+  placeholder.parentNode.insertBefore(card, placeholder);
+  placeholder.remove();
+  card.classList.remove('dragging-card');
+  card.style.position = '';
+  card.style.left = '';
+  card.style.top = '';
+  card.style.width = '';
+  card.style.height = '';
+
+  CARD_ORDER = [...grid.querySelectorAll('.card[data-groupkey]')].map(c => c.dataset.groupkey);
+  saveCardOrder();
+
+  dragState = null;
+  setTimeout(()=>{ suppressNextClick = false; }, 80);
+}
+
+grid.addEventListener('click', (e)=>{
+  if(suppressNextClick){ suppressNextClick = false; return; }
+  const photoImg = e.target.closest('.photo img');
+  if(photoImg){
+    document.getElementById('lightboxImg').src = photoImg.src;
+    document.getElementById('lightbox').classList.add('show');
+    openOverlayHistory('lightbox');
+    return;
+  }
+
+  const xBtn = e.target.closest('.x[data-delid]');
+  if(xBtn){
+    const id = xBtn.dataset.delid;
+    const item = DATA.find(d=>d.id===id);
+    if(item){
+      showConfirm(`Nº ${item.numeracao ?? '—'} de ${item.codigo} será removido da lista.`, 'Excluir essa numeração?').then(ok=>{
+        if(!ok) return;
+        deleteItems([item], `Nº ${item.numeracao ?? '—'} removido de ${item.codigo}.`);
+      });
+    }
+    return;
+  }
+
+  const chip = e.target.closest('.size-chip[data-editid]');
+  if(chip){ openForm(chip.dataset.editid); return; }
+
+  const addChip = e.target.closest('.add-size-chip');
+  if(addChip){
+    openForm(null, {
+      categoria: addChip.dataset.addcat,
+      codigo: addChip.dataset.addcodigo,
+      cor: addChip.dataset.addcor,
+      foto: addChip.dataset.addfoto,
+      fechamento: addChip.dataset.addfechamento === 'true',
+      semana: addChip.dataset.addsemana || ''
+    });
+    return;
+  }
+
+  const fechamentoGroupBtn = e.target.closest('button.fechar-btn[data-fechamentocode]');
+  if(fechamentoGroupBtn){
+    const key = fechamentoGroupBtn.dataset.fechamentocode;
+    const groupItems = DATA.filter(d => groupKey(d) === key);
+    if(groupItems.length){
+      const isFechamentoNow = !groupItems[0].fechamento;
+      groupItems.forEach(item => {
+        item.fechamento = isFechamentoNow;
+        saveToDB(item);
+      });
+      render();
+    }
+    return;
+  }
+
+  const editGroupBtn = e.target.closest('button.edit[data-editcode]');
+  if(editGroupBtn){
+    openGroupEditForm(editGroupBtn.dataset.editcode);
+    return;
+  }
+
+  const delGroupBtn = e.target.closest('button.del[data-delcode]');
+  if(delGroupBtn){
+    const key = delGroupBtn.dataset.delcode;
+    const groupItems = DATA.filter(d => groupKey(d) === key);
+    if(groupItems.length){
+      const totalPares = groupItems.reduce((s,d)=> s + (Number(d.quantidade)||0), 0);
+      const qtdNum = groupItems.length;
+      showConfirm(
+        `${groupItems[0].codigo} e ${qtdNum === 1 ? 'sua numeração' : `todas as ${qtdNum} numerações`} (${totalPares === 1 ? '1 par' : totalPares + ' pares'}) serão removidos da lista.`,
+        'Excluir esse sapato?'
+      ).then(ok=>{
+        if(!ok) return;
+        deleteItems(groupItems, `${groupItems[0].codigo} removido da lista.`);
+      });
+    }
+  }
+});
+
+const lightbox = document.getElementById('lightbox');
+lightbox.addEventListener('click', (e)=>{
+  if(e.target === lightbox) closeOverlayHistory('lightbox');
+});
+document.getElementById('lightboxCloseBtn').addEventListener('click', ()=> closeOverlayHistory('lightbox'));
+
+// ============================================================
+// CONFIRMAÇÃO CUSTOMIZADA — substitui o confirm() nativo do navegador
+// (feio e trava a tela) por um sheet no mesmo estilo visual do app.
+// Uso: showConfirm('mensagem', 'Título opcional').then(ok => { if(ok){...} });
+// ============================================================
+const confirmOverlay = document.getElementById('confirmOverlay');
+const confirmTitle = document.getElementById('confirmTitle');
+const confirmMessage = document.getElementById('confirmMessage');
+const confirmOkBtn = document.getElementById('confirmOkBtn');
+const confirmCancelBtn = document.getElementById('confirmCancelBtn');
+let confirmResolve = null;
+let confirmPendingResult = false;
+
+function showConfirm(message, title){
+  return new Promise(resolve => {
+    confirmTitle.textContent = title || 'Confirmar';
+    confirmMessage.textContent = message;
+    confirmResolve = resolve;
+    confirmPendingResult = false;
+    confirmOverlay.classList.add('show');
+    openOverlayHistory('confirmOverlay');
+  });
+}
+
+confirmOkBtn.addEventListener('click', ()=>{ confirmPendingResult = true; closeOverlayHistory('confirmOverlay'); });
+confirmCancelBtn.addEventListener('click', ()=>{ confirmPendingResult = false; closeOverlayHistory('confirmOverlay'); });
+confirmOverlay.addEventListener('click', (e)=>{ if(e.target === confirmOverlay){ confirmPendingResult = false; closeOverlayHistory('confirmOverlay'); } });
+
+const overlay = document.getElementById('overlay');
+const itemForm = document.getElementById('itemForm');
+const catChoice = document.getElementById('catChoice');
+let selectedCat = 'basquete';
+let selectedObsColor = '';
+const fObsColorSwatchesEl = document.getElementById('fObsColorSwatches');
+
+catChoice.addEventListener('click', (e)=>{
+  const btn = e.target.closest('button');
+  if(!btn) return;
+  selectedCat = btn.dataset.cat;
+  [...catChoice.children].forEach(b=> b.classList.toggle('sel', b===btn));
+});
+
+function populateWeekSelect(selected){
+  const sel = document.getElementById('fSemana');
+  let html = `<option value="" disabled ${!selected ? 'selected' : ''}>Selecione uma semana</option>`;
+  html += WEEKS.map(w => `<option value="${w}">${w}</option>`).join('');
+  html += '<option value="__new__">+ Nova semana...</option>';
+  sel.innerHTML = html;
+  if(selected && WEEKS.includes(selected)){
+    sel.value = selected;
+  }
+}
+
+document.getElementById('fSemana').addEventListener('change', function(){
+  if(this.value === '__new__'){
+    const created = addNewWeek();
+    populateWeekSelect(created || '');
+    renderWeekBar();
+  }
+});
+
+let sizeRowCounter = 0;
+const sizeRowsEl = document.getElementById('sizeRows');
+
+function addSizeRow(numVal, qtdVal, obsVal, colorVal){
+  const rid = 'r' + (sizeRowCounter++);
+  const group = document.createElement('div');
+  group.className = 'size-row-group';
+  group.dataset.rowid = rid;
+  group.dataset.color = colorVal || '';
+
+  const row = document.createElement('div');
+  row.className = 'size-row-input';
+  row.innerHTML = `
+    <input type="number" class="row-num" step="any" inputmode="decimal" placeholder="Nº (ex: 38 ou 4.5)" value="${numVal ?? ''}">
+    <input type="number" class="row-qtd" min="0" placeholder="Qtd" value="${qtdVal ?? ''}">
+    <button type="button" class="row-remove" data-removerow="${rid}">✕</button>
+  `;
+
+  const noteWrap = document.createElement('div');
+  noteWrap.className = 'row-note-wrap';
+  const noteInput = document.createElement('input');
+  noteInput.type = 'text';
+  noteInput.className = 'row-note';
+  noteInput.placeholder = 'Comentário (opcional)';
+  noteInput.value = obsVal || '';
+  const swatchesDiv = document.createElement('div');
+  swatchesDiv.className = 'color-swatches';
+  buildColorSwatches(swatchesDiv, colorVal || '', (c)=>{ group.dataset.color = c; });
+  noteWrap.appendChild(noteInput);
+  noteWrap.appendChild(swatchesDiv);
+
+  group.appendChild(row);
+  group.appendChild(noteWrap);
+  sizeRowsEl.appendChild(group);
+}
+
+// Recomeça a lista de numerações do formulário com uma linha em branco
+// (usado toda vez que se abre o formulário pra cadastrar sapato novo).
+function resetSizeRows(){
+  sizeRowsEl.innerHTML = '';
+  sizeRowCounter = 0;
+  addSizeRow();
+}
+
+document.getElementById('addSizeRowBtn').addEventListener('click', ()=> addSizeRow());
+
+sizeRowsEl.addEventListener('click', (e)=>{
+  const btn = e.target.closest('[data-removerow]');
+  if(!btn) return;
+  const groups = sizeRowsEl.querySelectorAll('.size-row-group');
+  if(groups.length <= 1){
+    // Mantém sempre ao menos uma linha visível; só limpa os campos dela.
+    const group = btn.closest('.size-row-group');
+    group.querySelector('.row-num').value = '';
+    group.querySelector('.row-qtd').value = '';
+    group.querySelector('.row-note').value = '';
+    group.dataset.color = '';
+    buildColorSwatches(group.querySelector('.color-swatches'), '', (c)=>{ group.dataset.color = c; });
+    return;
+  }
+  btn.closest('.size-row-group').remove();
+});
+
+// Abre o formulário pra editar TODAS as numerações de um card de uma vez
+// (usado pelo botão ✎ Editar), em vez de só a primeira numeração.
+function openGroupEditForm(key){
+  const rows = DATA.filter(d => groupKey(d) === key);
+  if(!rows.length) return;
+  const first = rows[0];
+
+  hideToast();
+  newFormPreserved = false;
+  document.getElementById('formTabs').style.display = 'none';
+  document.getElementById('formTitle').style.display = '';
+  editingId = null;
+  editingGroupKey = key;
+  photoDataUrl = "";
+  document.getElementById('photoPreview').style.display='none';
+  document.getElementById('photoText').textContent = 'Toque para escolher uma foto';
+  document.getElementById('photoFile').value = '';
+  document.getElementById('catalogSearch').value = '';
+  hideCatalogResults();
+  document.getElementById('catalogField').style.display = 'none';
+  document.getElementById('addToStockField').style.display = 'none';
+  document.getElementById('singleSizeField').style.display = 'none';
+  document.getElementById('singleObsField').style.display = 'none';
+  document.getElementById('multiSizesField').style.display = '';
+
+  document.getElementById('formTitle').textContent = `Editar sapato — ${first.codigo}`;
+  document.getElementById('fCodigo').value = first.codigo || '';
+  document.getElementById('fCor').value = first.cor || '';
+  document.getElementById('fFechamento').checked = first.fechamento || false;
+  selectedCat = first.categoria;
+  populateWeekSelect(first.semana || '');
+
+  sizeRowsEl.innerHTML = '';
+  sizeRowCounter = 0;
+  rows
+    .sort((a,b)=> (Number(a.numeracao)||0) - (Number(b.numeracao)||0))
+    .forEach(r => addSizeRow(r.numeracao, r.quantidade, r.obs, r.obsColor));
+
+  if(first.foto){
+    photoDataUrl = first.foto;
+    document.getElementById('photoPreview').src = first.foto;
+    document.getElementById('photoPreview').style.display = 'block';
+    document.getElementById('photoText').textContent = 'Toque para trocar a foto';
+  }
+
+  [...catChoice.children].forEach(b=> b.classList.toggle('sel', b.dataset.cat===selectedCat));
+  overlay.classList.add('show');
+  openOverlayHistory('overlay');
+}
+
+function openForm(id, prefill){
+  hideToast();
+  newFormPreserved = false;
+  const showTabs = !id && !prefill;
+  document.getElementById('formTabs').style.display = showTabs ? '' : 'none';
+  document.getElementById('formTitle').style.display = showTabs ? 'none' : '';
+  editingId = id || null;
+  editingGroupKey = null;
+  photoDataUrl = "";
+  document.getElementById('photoPreview').style.display='none';
+  document.getElementById('photoText').textContent = 'Toque para escolher uma foto';
+  document.getElementById('photoFile').value = '';
+  document.getElementById('fFechamento').checked = false;
+  document.getElementById('fAddToStock').checked = true;
+  document.getElementById('catalogSearch').value = '';
+  hideCatalogResults();
+  document.getElementById('catalogField').style.display = (id || prefill) ? 'none' : '';
+  document.getElementById('addToStockField').style.display = (id || prefill) ? 'none' : '';
+  document.getElementById('singleSizeField').style.display = id ? '' : 'none';
+  document.getElementById('singleObsField').style.display = id ? '' : 'none';
+  document.getElementById('multiSizesField').style.display = id ? 'none' : '';
+
+  if(id){
+    const item = DATA.find(d=>d.id===id);
+    document.getElementById('formTitle').textContent = 'Editar sapato';
+    document.getElementById('fCodigo').value = item.codigo || '';
+    document.getElementById('fCor').value = item.cor || '';
+    document.getElementById('fNum').value = item.numeracao ?? '';
+    document.getElementById('fQtd').value = item.quantidade ?? '';
+    document.getElementById('fObs').value = item.obs || '';
+    selectedObsColor = item.obsColor || '';
+    buildColorSwatches(fObsColorSwatchesEl, selectedObsColor, (c)=>{ selectedObsColor = c; });
+    document.getElementById('fFechamento').checked = item.fechamento || false;
+    selectedCat = item.categoria;
+    populateWeekSelect(item.semana || '');
+    if(item.foto){
+      photoDataUrl = item.foto;
+      document.getElementById('photoPreview').src = item.foto;
+      document.getElementById('photoPreview').style.display = 'block';
+      document.getElementById('photoText').textContent = 'Toque para trocar a foto';
+    }
+  } else if(prefill){
+    document.getElementById('formTitle').textContent = `Nova(s) numeração(ões) — ${prefill.codigo}`;
+    itemForm.reset();
+    document.getElementById('fCodigo').value = prefill.codigo || '';
+    document.getElementById('fCor').value = prefill.cor || '';
+    document.getElementById('fFechamento').checked = prefill.fechamento || false;
+    selectedCat = prefill.categoria || 'basquete';
+    populateWeekSelect(prefill.semana !== undefined ? prefill.semana : (currentWeek === 'todas' ? '' : currentWeek));
+    resetSizeRows();
+    if(prefill.foto){
+      photoDataUrl = prefill.foto;
+      document.getElementById('photoPreview').src = prefill.foto;
+      document.getElementById('photoPreview').style.display = 'block';
+      document.getElementById('photoText').textContent = 'Toque para trocar a foto';
+    }
+  } else {
+    document.getElementById('formTitle').textContent = 'Adicionar sapato';
+    itemForm.reset();
+    selectedCat = null;
+    populateWeekSelect(currentWeek === 'todas' ? '' : currentWeek);
+    resetSizeRows();
+  }
+  [...catChoice.children].forEach(b=> b.classList.toggle('sel', b.dataset.cat===selectedCat));
+  overlay.classList.add('show');
+  openOverlayHistory('overlay');
+  if(prefill){ setTimeout(()=> sizeRowsEl.querySelector('.row-num')?.focus(), 150); }
+}
+
+// Esconde a janela do formulário e limpa o estado de edição. Esta é a
+// função "de verdade" que some com o overlay da tela — chamada tanto
+// pelo botão voltar do celular quanto pelos botões Cancelar/tocar fora
+// (através de closeForm/closeOverlayHistory, ver mais abaixo).
+function hideForm(){
+  newFormPreserved = false;
+  overlay.classList.remove('show');
+  editingId = null;
+  editingGroupKey = null;
+}
+
+function closeForm(){ closeOverlayHistory('overlay'); }
+
+const catalogSearch = document.getElementById('catalogSearch');
+const catalogResults = document.getElementById('catalogResults');
+
+function hideCatalogResults(){ catalogResults.classList.remove('show'); catalogResults.innerHTML=''; }
+
+function renderCatalogResults(term){
+  const t = term.toLowerCase().trim();
+  let matches = CATALOG;
+  if(t){
+    matches = CATALOG.filter(g =>
+      (g.codigo||'').toLowerCase().includes(t) ||
+      (g.cor||'').toLowerCase().includes(t)
+    );
+  }
+  matches = matches
+    .slice()
+    .sort((a,b)=> (a.codigo||'').localeCompare(b.codigo||''))
+    .slice(0, 12);
+
+  catalogResults.innerHTML = '';
+  if(matches.length === 0){
+    catalogResults.innerHTML = '<div class="catalog-empty">Nenhum sapato encontrado no catálogo.</div>';
+  } else {
+    matches.forEach(g=>{
+      const div = document.createElement('div');
+      div.className = 'catalog-item';
+      div.innerHTML = `
+        <div class="thumb">${g.foto ? `<img src="${g.foto}" alt="">` : iconFor(g.categoria)}</div>
+        <div class="info">
+          <div class="cod">${g.codigo||'—'}</div>
+          <div class="c">${CAT_LABEL[g.categoria]}${g.cor ? ' · '+g.cor : ''}</div>
+        </div>
+      `;
+      div.addEventListener('click', ()=>{
+        selectedCat = g.categoria;
+        [...catChoice.children].forEach(b=> b.classList.toggle('sel', b.dataset.cat===selectedCat));
+        document.getElementById('fCodigo').value = g.codigo || '';
+        document.getElementById('fCor').value = g.cor || '';
+        if(g.foto){
+          photoDataUrl = g.foto;
+          document.getElementById('photoPreview').src = g.foto;
+          document.getElementById('photoPreview').style.display = 'block';
+          document.getElementById('photoText').textContent = 'Toque para trocar a foto';
+        }
+        catalogSearch.value = `${g.codigo} — usando cadastro existente`;
+        hideCatalogResults();
+        sizeRowsEl.querySelector('.row-num')?.focus();
+      });
+      catalogResults.appendChild(div);
+    });
+  }
+  catalogResults.classList.add('show');
+}
+
+catalogSearch.addEventListener('input', ()=> renderCatalogResults(catalogSearch.value));
+catalogSearch.addEventListener('focus', ()=> renderCatalogResults(catalogSearch.value));
+document.addEventListener('click', (e)=>{
+  if(!e.target.closest('.catalog-wrap')) hideCatalogResults();
+});
+
+const stockOverlay = document.getElementById('stockOverlay');
+const stockSearch = document.getElementById('stockSearch');
+const stockList = document.getElementById('stockList');
+const stockCatFilter = document.getElementById('stockCatFilter');
+let stockCat = 'todos';
+
+function renderStockList(){
+  const t = stockSearch.value.toLowerCase().trim();
+  let matches = CATALOG.filter(g =>
+    (stockCat === 'todos' || g.categoria === stockCat) &&
+    (!t || (g.codigo||'').toLowerCase().includes(t) || (g.cor||'').toLowerCase().includes(t))
+  );
+  matches = matches.slice().sort((a,b)=> (a.codigo||'').localeCompare(b.codigo||''));
+
+  stockList.innerHTML = '';
+  if(matches.length === 0){
+    stockList.innerHTML = '<div class="catalog-empty">Nenhum sapato no estoque nesta categoria.</div>';
+    return;
+  }
+  const frag = document.createDocumentFragment();
+  matches.forEach(g=>{
+    const div = document.createElement('div');
+    div.className = 'catalog-item stock-row';
+    div.innerHTML = `
+      <div class="thumb">${g.foto ? `<img src="${g.foto}" alt="">` : iconFor(g.categoria)}</div>
+      <div class="info">
+        <div class="cod">${g.codigo||'—'}</div>
+        <div class="c">${CAT_LABEL[g.categoria]}${g.cor ? ' · '+g.cor : ''}</div>
+      </div>
+      <div class="stock-actions">
+        <button type="button" class="mini-btn icon-btn" data-addstock="${g.id}" title="Adicionar à lista">➕</button>
+        <button type="button" class="mini-btn icon-btn" data-editstock="${g.id}" title="Editar cadastro">✎</button>
+        <button type="button" class="mini-btn icon-btn" data-delstock="${g.id}" title="Excluir do estoque">🗑</button>
+      </div>
+    `;
+    frag.appendChild(div);
+  });
+  stockList.appendChild(frag);
+}
+
+stockSearch.addEventListener('input', renderStockList);
+
+stockCatFilter.addEventListener('click', (e)=>{
+  const btn = e.target.closest('button');
+  if(!btn) return;
+  stockCat = btn.dataset.cat;
+  [...stockCatFilter.children].forEach(b=> b.classList.toggle('sel', b===btn));
+  renderStockList();
+});
+
+function showStockOverlay(){
+  stockSearch.value = '';
+  stockCat = 'todos';
+  [...stockCatFilter.children].forEach(b=> b.classList.toggle('sel', b.dataset.cat==='todos'));
+  renderStockList();
+  stockOverlay.classList.add('show');
+  openOverlayHistory('stockOverlay');
+}
+
+// Abas "Estoque" | "Novo sapato" (a janela do botão +). Ao ir do formulário
+// para o Estoque, o que já foi digitado fica guardado e volta ao reabrir a aba.
+document.querySelectorAll('.sheet-tabs').forEach(bar => {
+  bar.addEventListener('click', (e)=>{
+    const btn = e.target.closest('button[data-tab]');
+    if(!btn || btn.classList.contains('active')) return;
+    if(btn.dataset.tab === 'stock'){
+      switchOverlay('overlay', ()=>{ newFormPreserved = true; showStockOverlay(); }, ()=> overlay.classList.remove('show'));
+    } else {
+      switchOverlay('stockOverlay', ()=>{
+        if(newFormPreserved){
+          overlay.classList.add('show');
+          openOverlayHistory('overlay');
+        } else {
+          openForm(null);
+        }
+      });
+    }
+  });
+});
+document.getElementById('stockCloseBtn').addEventListener('click', ()=> closeOverlayHistory('stockOverlay'));
+stockOverlay.addEventListener('click', (e)=>{ if(e.target === stockOverlay) closeOverlayHistory('stockOverlay'); });
+
+const settingsOverlay = document.getElementById('settingsOverlay');
+document.getElementById('settingsBtn').addEventListener('click', ()=>{
+  settingsOverlay.classList.add('show');
+  openOverlayHistory('settingsOverlay');
+});
+document.getElementById('settingsCloseBtn').addEventListener('click', ()=> closeOverlayHistory('settingsOverlay'));
+settingsOverlay.addEventListener('click', (e)=>{ if(e.target === settingsOverlay) closeOverlayHistory('settingsOverlay'); });
+
+// ============================================================
+// CADASTRO DO ESTOQUE — cria ou edita um sapato só no Estoque, sem
+// colocar nada na lista de compras. Abre por cima da janela do Estoque.
+// Ao editar, cor/foto (e código/categoria, se mudarem) também são
+// atualizados nos itens da lista que usam esse mesmo sapato.
+// ============================================================
+const catalogOverlay = document.getElementById('catalogOverlay');
+const catalogForm = document.getElementById('catalogForm');
+const catalogCatChoice = document.getElementById('catalogCatChoice');
+let catalogEditingId = null;
+let catalogSelectedCat = null;
+let catalogPhotoData = '';
+
+function setCatalogPhotoPreview(src){
+  const prev = document.getElementById('catalogPhotoPreview');
+  if(src){
+    prev.src = src;
+    prev.style.display = 'block';
+    document.getElementById('catalogPhotoText').textContent = 'Toque para trocar a foto';
+  } else {
+    prev.removeAttribute('src');
+    prev.style.display = 'none';
+    document.getElementById('catalogPhotoText').textContent = 'Toque para escolher uma foto';
+  }
+}
+
+function openCatalogForm(id){
+  const entry = id ? CATALOG.find(c => c.id === id) : null;
+  if(id && !entry) return;
+  hideToast();
+  catalogForm.reset();
+  catalogEditingId = entry ? entry.id : null;
+  catalogSelectedCat = entry ? entry.categoria : (stockCat !== 'todos' ? stockCat : null);
+  catalogPhotoData = entry ? (entry.foto || '') : '';
+  document.getElementById('catalogFormTitle').textContent = entry ? `Editar cadastro — ${entry.codigo}` : 'Novo no estoque';
+  document.getElementById('cCodigo').value = entry ? (entry.codigo || '') : '';
+  document.getElementById('cCor').value = entry ? (entry.cor || '') : '';
+  setCatalogPhotoPreview(catalogPhotoData);
+  [...catalogCatChoice.children].forEach(b => b.classList.toggle('sel', b.dataset.cat === catalogSelectedCat));
+  catalogOverlay.classList.add('show');
+  openOverlayHistory('catalogOverlay');
+}
+
+catalogCatChoice.addEventListener('click', (e)=>{
+  const btn = e.target.closest('button');
+  if(!btn) return;
+  catalogSelectedCat = btn.dataset.cat;
+  [...catalogCatChoice.children].forEach(b => b.classList.toggle('sel', b === btn));
+});
+
+document.getElementById('catalogPhotoFile').addEventListener('change', (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  document.getElementById('catalogPhotoText').textContent = 'Otimizando foto...';
+  compressImage(file)
+    .then(dataUrl => { catalogPhotoData = dataUrl; setCatalogPhotoPreview(dataUrl); })
+    .catch(err => {
+      toast('Erro ao processar a foto: ' + err.message);
+      setCatalogPhotoPreview(catalogPhotoData);
+    });
+});
+
+// Leva a edição do estoque para os itens da lista que usam esse sapato.
+function propagateCatalogEdit(oldEntry, entry){
+  const oldKey = catalogKey(oldEntry.categoria, oldEntry.codigo);
+  const affected = DATA.filter(d => catalogKey(d.categoria, d.codigo) === oldKey);
+  if(!affected.length) return;
+  affected.forEach(item => {
+    const oldGroup = groupKey(item);
+    item.categoria = entry.categoria;
+    item.codigo = entry.codigo;
+    item.cor = entry.cor;
+    item.foto = entry.foto || item.foto;
+    const newGroup = groupKey(item);
+    if(oldGroup !== newGroup){
+      const i = CARD_ORDER.indexOf(oldGroup);
+      if(i !== -1) CARD_ORDER[i] = newGroup;
+    }
+    saveToDB(item);
+  });
+  CARD_ORDER = CARD_ORDER.filter((k, i) => CARD_ORDER.indexOf(k) === i);
+  saveCardOrder();
+}
+
+catalogForm.addEventListener('submit', (e)=>{
+  e.preventDefault();
+  const codigo = document.getElementById('cCodigo').value.trim();
+  const cor = document.getElementById('cCor').value.trim();
+  if(!catalogSelectedCat){ toast('Selecione a categoria: Basquete, Bota ou Plataforma.'); return; }
+  if(!codigo){ toast('Preencha o Código.'); return; }
+  if(!CLOUD_MODE && !db){ toast('Ainda carregando os dados, aguarde um instante e tente de novo.'); return; }
+
+  const newKey = catalogKey(catalogSelectedCat, codigo);
+  if(newKey !== catalogEditingId && CATALOG.some(c => c.id === newKey)){
+    toast('Esse código já está cadastrado no estoque nessa categoria.');
+    return;
+  }
+
+  const oldEntry = catalogEditingId ? CATALOG.find(c => c.id === catalogEditingId) : null;
+  const entry = { id:newKey, categoria:catalogSelectedCat, codigo, cor, foto:catalogPhotoData };
+
+  if(oldEntry && oldEntry.id !== newKey) deleteCatalogEntry(oldEntry.id);
+  saveCatalogEntry(entry);
+  if(oldEntry) propagateCatalogEdit(oldEntry, entry);
+
+  toast(oldEntry ? 'Cadastro atualizado.' : 'Sapato cadastrado no estoque.');
+  closeOverlayHistory('catalogOverlay');
+  renderStockList();
+  render();
+});
+
+document.getElementById('catalogCancelBtn').addEventListener('click', ()=> closeOverlayHistory('catalogOverlay'));
+catalogOverlay.addEventListener('click', (e)=>{ if(e.target === catalogOverlay) closeOverlayHistory('catalogOverlay'); });
+
+document.getElementById('stockAddNewBtn').addEventListener('click', ()=> openCatalogForm(null));
+
+stockList.addEventListener('click', (e)=>{
+  const editBtn = e.target.closest('[data-editstock]');
+  if(editBtn){ openCatalogForm(editBtn.dataset.editstock); return; }
+
+  // Toque na foto do estoque abre ela grande.
+  const thumbImg = e.target.closest('.thumb img');
+  if(thumbImg){
+    document.getElementById('lightboxImg').src = thumbImg.src;
+    lightbox.classList.add('show');
+    openOverlayHistory('lightbox');
+    return;
+  }
+
+  const addBtn = e.target.closest('[data-addstock]');
+  if(addBtn){
+    const g = CATALOG.find(c=>c.id===addBtn.dataset.addstock);
+    if(g){
+      switchOverlay('stockOverlay', ()=>{
+        openForm(null, { categoria:g.categoria, codigo:g.codigo, cor:g.cor, foto:g.foto, fechamento:false, fromStock:true });
+        document.getElementById('formTitle').textContent = `Adicionar à lista — ${g.codigo}`;
+      });
+    }
+    return;
+  }
+  const delBtn = e.target.closest('[data-delstock]');
+  if(delBtn){
+    const g = CATALOG.find(c=>c.id===delBtn.dataset.delstock);
+    if(g){
+      showConfirm('Isso NÃO remove numerações que já estejam na sua lista de compras — só apaga o cadastro para busca futura.', `Excluir ${g.codigo} do estoque?`).then(ok=>{
+        if(!ok) return;
+        deleteCatalogEntry(g.id);
+        renderStockList();
+        toast('Removido do estoque.');
+      });
+    }
+  }
+});
+
+document.getElementById('fabAdd').addEventListener('click', ()=>{ newFormPreserved = false; showStockOverlay(); });
+document.getElementById('cancelBtn').addEventListener('click', closeForm);
+overlay.addEventListener('click', (e)=>{ if(e.target === overlay) closeForm(); });
+
+// Corrige o teclado do celular cobrindo o botão Salvar: mantém o overlay
+// do tamanho real da área visível da tela (sem o teclado por baixo).
+if(window.visualViewport){
+  const vv = window.visualViewport;
+  const fixOverlaySize = () => {
+    document.querySelectorAll('.overlay').forEach(o => {
+      o.style.height = vv.height + 'px';
+      o.style.top = vv.offsetTop + 'px';
+    });
+  };
+  vv.addEventListener('resize', fixOverlaySize);
+  vv.addEventListener('scroll', fixOverlaySize);
+  fixOverlaySize();
+}
+
+// Quando um campo ganha foco (teclado abre), garante que os botões de
+// Salvar/Cancelar fiquem visíveis rolando a tela até eles.
+itemForm.addEventListener('focusin', ()=>{
+  setTimeout(()=>{
+    document.querySelector('.sheet-actions')?.scrollIntoView({block:'end', behavior:'smooth'});
+  }, 300);
+});
+
+// Redimensiona e comprime a foto no próprio navegador antes de guardar,
+// pra evitar que o banco de dados fique pesado e o app trave com o tempo.
+function compressImage(file, maxDim = 900, quality = 0.72){
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('Não foi possível ler a imagem.'));
+    reader.onload = (evt) => {
+      const img = new Image();
+      img.onerror = () => reject(new Error('Não foi possível processar a imagem.'));
+      img.onload = () => {
+        let { width, height } = img;
+        if(width > maxDim || height > maxDim){
+          if(width >= height){ height = Math.round(height * (maxDim / width)); width = maxDim; }
+          else { width = Math.round(width * (maxDim / height)); height = maxDim; }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width; canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.src = evt.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+document.getElementById('photoFile').addEventListener('change', (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  document.getElementById('photoText').textContent = 'Otimizando foto...';
+  compressImage(file)
+    .then(dataUrl => {
+      photoDataUrl = dataUrl;
+      document.getElementById('photoPreview').src = photoDataUrl;
+      document.getElementById('photoPreview').style.display = 'block';
+      document.getElementById('photoText').textContent = 'Toque para trocar a foto';
+    })
+    .catch(err => {
+      toast('Erro ao processar a foto: ' + err.message);
+      document.getElementById('photoText').textContent = 'Toque para escolher uma foto';
+    });
+});
+
+itemForm.addEventListener('submit', (e)=>{
+  e.preventDefault();
+  const codigo = document.getElementById('fCodigo').value.trim();
+  const cor = document.getElementById('fCor').value.trim();
+  const fechamento = document.getElementById('fFechamento').checked;
+  const semana = document.getElementById('fSemana').value;
+
+  if(!selectedCat){ toast('Selecione a categoria: Basquete, Bota ou Plataforma.'); return; }
+  if(!codigo){ toast('Preencha ao menos o Código.'); return; }
+  if(!semana || semana === '__new__'){ toast('Escolha (ou crie) uma semana antes de salvar.'); return; }
+  if(!CLOUD_MODE && !db){ toast('Ainda carregando os dados, aguarde um instante e tente de novo.'); return; }
+
+  const basePayload = {
+    categoria: selectedCat,
+    codigo,
+    cor,
+    foto: photoDataUrl,
+    fechamento,
+    semana
+  };
+
+  // Lê as linhas de numeração preenchidas, juntando (somando quantidade)
+  // caso o mesmo número tenha sido digitado em mais de uma linha.
+  function readMergedSizeRows(){
+    const merged = new Map();
+    [...sizeRowsEl.querySelectorAll('.size-row-group')].forEach(group => {
+      const numStr = group.querySelector('.row-num').value.trim();
+      const qtdStr = group.querySelector('.row-qtd').value.trim();
+      const obs = group.querySelector('.row-note').value.trim();
+      const obsColor = group.dataset.color || '';
+      if(numStr === '') return;
+      const num = Number(numStr);
+      const qtd = qtdStr === '' ? null : Number(qtdStr);
+      if(merged.has(num)){
+        const prev = merged.get(num);
+        merged.set(num, {
+          quantidade: prev.quantidade === null && qtd === null ? null : (prev.quantidade||0) + (qtd||0),
+          obs: obs || prev.obs,
+          obsColor: obsColor || prev.obsColor
+        });
+      } else {
+        merged.set(num, { quantidade: qtd, obs, obsColor });
+      }
+    });
+    return [...merged.entries()].map(([numeracao, v]) => ({ numeracao, quantidade: v.quantidade, obs: v.obs, obsColor: v.obsColor }));
+  }
+
+  try{
+    if(editingId){
+      const numeracao = document.getElementById('fNum').value.trim();
+      const quantidade = document.getElementById('fQtd').value.trim();
+      const payload = {
+        ...basePayload,
+        numeracao: numeracao === '' ? null : Number(numeracao),
+        quantidade: quantidade === '' ? null : Number(quantidade),
+        obs: document.getElementById('fObs').value.trim(),
+        obsColor: selectedObsColor
+      };
+
+      const idx = DATA.findIndex(d=>d.id===editingId);
+      const oldKey = groupKey(DATA[idx]);
+      DATA[idx] = { ...DATA[idx], ...payload };
+      saveToDB(DATA[idx]);
+
+      // Propaga fechamento/foto/semana pra todas as numerações que estavam
+      // no mesmo card (mesmo código, categoria e semana de antes da edição).
+      DATA.filter(d => d.id !== editingId && groupKey(d) === oldKey).forEach(item => {
+        item.fechamento = payload.fechamento;
+        item.foto = payload.foto || item.foto;
+        item.semana = payload.semana;
+        saveToDB(item);
+      });
+
+      syncCatalogFromItem(basePayload, codigo);
+      toast('Sapato atualizado.');
+    } else if(editingGroupKey){
+      // Edição do card inteiro: compara a lista nova de numerações com a
+      // antiga, atualiza as que continuam, cria as novas e remove as que
+      // foram tiradas do formulário.
+      const oldRows = DATA.filter(d => groupKey(d) === editingGroupKey);
+      const newRows = readMergedSizeRows();
+
+      if(newRows.length === 0){
+        toast('Adicione ao menos uma numeração.');
+        return;
+      }
+
+      const usedOldIds = new Set();
+      const finalItems = newRows.map(r => {
+        const match = oldRows.find(o => !usedOldIds.has(o.id) && Number(o.numeracao) === r.numeracao);
+        if(match){
+          usedOldIds.add(match.id);
+          return { ...match, ...basePayload, numeracao: r.numeracao, quantidade: r.quantidade, obs: r.obs, obsColor: r.obsColor };
+        }
+        return { id: newId(), ...basePayload, numeracao: r.numeracao, quantidade: r.quantidade, obs: r.obs, obsColor: r.obsColor, jaFechado: false };
+      });
+
+      oldRows.filter(o => !usedOldIds.has(o.id)).forEach(o => {
+        DATA = DATA.filter(d => d.id !== o.id);
+        deleteFromDB(o.id);
+      });
+
+      finalItems.forEach(item => {
+        const idx = DATA.findIndex(d => d.id === item.id);
+        if(idx >= 0) DATA[idx] = item; else DATA.push(item);
+        saveToDB(item);
+      });
+
+      syncCatalogFromItem(basePayload, codigo);
+      toast('Sapato atualizado.');
+    } else {
+      // Cadastro novo: cada numeração preenchida vira um item — ou, se já
+      // existir essa mesma numeração no card (mesmo código/categoria/semana),
+      // soma a quantidade nela em vez de criar um item duplicado.
+      const rows = readMergedSizeRows();
+
+      if(rows.length === 0){
+        toast('Adicione ao menos uma numeração.');
+        return;
+      }
+
+      const targetGroupKey = groupKey({ categoria: selectedCat, codigo, semana });
+      let addedCount = 0;
+      let mergedCount = 0;
+
+      rows.forEach(r => {
+        const existing = DATA.find(d => groupKey(d) === targetGroupKey && Number(d.numeracao) === Number(r.numeracao));
+        if(existing){
+          existing.quantidade = (Number(existing.quantidade)||0) + (Number(r.quantidade)||0);
+          if(r.obs) existing.obs = r.obs;
+          if(r.obsColor) existing.obsColor = r.obsColor;
+          if(basePayload.foto) existing.foto = basePayload.foto;
+          if(basePayload.cor) existing.cor = basePayload.cor;
+          existing.fechamento = basePayload.fechamento;
+          saveToDB(existing);
+          mergedCount++;
+        } else {
+          const newItem = {
+            id: newId(),
+            ...basePayload,
+            numeracao: r.numeracao,
+            quantidade: r.quantidade,
+            obs: r.obs,
+            obsColor: r.obsColor
+          };
+          DATA.push(newItem);
+          saveToDB(newItem);
+          addedCount++;
+        }
+      });
+
+      if(document.getElementById('fAddToStock').checked){
+        upsertCatalogFromItem(basePayload, codigo);
+      }
+
+      let msg;
+      if(mergedCount > 0 && addedCount === 0){
+        msg = mergedCount === 1 ? 'Quantidade somada na numeração já existente.' : `${mergedCount} numerações somadas às já existentes.`;
+      } else if(mergedCount > 0 && addedCount > 0){
+        msg = `${addedCount} numeração(ões) nova(s) adicionada(s) e ${mergedCount} somada(s) às existentes.`;
+      } else {
+        msg = rows.length === 1 ? 'Sapato adicionado à lista.' : `${rows.length} numerações adicionadas à lista.`;
+      }
+      toast(msg);
+    }
+    closeForm();
+    render();
+  }catch(err){
+    toast('Erro ao salvar: ' + err.message);
+  }
+});
+
+document.getElementById('exportBtn').addEventListener('click', ()=>{
+  const backup = { shoes: DATA, catalog: CATALOG };
+  const blob = new Blob([JSON.stringify(backup, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'fechamento.json'; a.click();
+  URL.revokeObjectURL(url);
+  toast('Arquivo exportado (lista + estoque).');
+  closeOverlayHistory('settingsOverlay');
+});
+
+document.getElementById('importBtn').addEventListener('click', ()=> document.getElementById('importFile').click());
+document.getElementById('importFile').addEventListener('change', (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (evt)=>{
+    try{
+      const imported = JSON.parse(evt.target.result);
+      let importedShoes, importedCatalog = null;
+      if(Array.isArray(imported)){
+        // Formato antigo: um array só com a lista de compras.
+        importedShoes = imported;
+      } else if(imported && Array.isArray(imported.shoes)){
+        // Formato novo: { shoes: [...], catalog: [...] }
+        importedShoes = imported.shoes;
+        importedCatalog = Array.isArray(imported.catalog) ? imported.catalog : null;
+      } else {
+        throw new Error('formato inválido');
+      }
+
+      const newData = importedShoes.map(d => ({
+        id: newId(),
+        categoria: d.categoria || 'basquete',
+        codigo: d.codigo || '',
+        cor: d.cor || '',
+        numeracao: d.numeracao ?? null,
+        quantidade: d.quantidade ?? null,
+        foto: d.foto || '',
+        fechamento: d.fechamento || false,
+        jaFechado: d.jaFechado || false,
+        semana: d.semana || '',
+        obs: d.obs || '',
+        obsColor: d.obsColor || ''
+      }));
+
+      const newCatalog = importedCatalog ? importedCatalog.map(c => ({
+        id: catalogKey(c.categoria, c.codigo),
+        categoria: c.categoria || 'basquete',
+        codigo: c.codigo || '',
+        cor: c.cor || '',
+        foto: c.foto || ''
+      })) : null;
+
+      const finishImport = () => {
+        DATA = newData;
+        if(newCatalog){
+          CATALOG = newCatalog;
+        } else {
+          // Backup antigo sem estoque: deriva o cadastro a partir dos itens importados.
+          const seen = {};
+          DATA.forEach(item => {
+            const key = catalogKey(item.categoria, item.codigo);
+            if(!seen[key]){
+              seen[key] = true;
+              upsertCatalogFromItem(item, item.codigo);
+            }
+          });
+        }
+        render();
+        toast(newCatalog ? 'Lista e estoque importados com sucesso.' : 'Lista importada com sucesso.');
+        closeOverlayHistory('settingsOverlay');
+      };
+
+      if(CLOUD_MODE){
+        // Substitui a lista de compras inteira na nuvem (afeta todo mundo que usa este link).
+        supa.from('shoes').select('id').then(({data})=>{
+          const ids = (data||[]).map(r=>r.id);
+          const cleanup = ids.length ? supa.from('shoes').delete().in('id', ids) : Promise.resolve({error:null});
+          Promise.resolve(cleanup).then(()=>{
+            supa.from('shoes').insert(newData.map(itemToRow)).then(({error})=>{
+              if(error){ toast('Erro ao importar na nuvem: ' + error.message); return; }
+              if(newCatalog){
+                supa.from('catalog').select('id').then(({data:catIds})=>{
+                  const cids = (catIds||[]).map(r=>r.id);
+                  const cleanupCat = cids.length ? supa.from('catalog').delete().in('id', cids) : Promise.resolve({error:null});
+                  Promise.resolve(cleanupCat).then(()=>{
+                    supa.from('catalog').insert(newCatalog).then(({error})=>{
+                      if(error){ toast('Erro ao importar estoque na nuvem: ' + error.message); return; }
+                      finishImport();
+                    });
+                  });
+                });
+              } else {
+                finishImport();
+              }
+            });
+          });
+        });
+      } else {
+        const stores = newCatalog ? ['shoes','catalog'] : ['shoes'];
+        const tx = db.transaction(stores, 'readwrite');
+        const shoesStore = tx.objectStore('shoes');
+        shoesStore.clear();
+        newData.forEach(item => shoesStore.put(item));
+        if(newCatalog){
+          const catalogStore = tx.objectStore('catalog');
+          catalogStore.clear();
+          newCatalog.forEach(entry => catalogStore.put(entry));
+        }
+        tx.oncomplete = finishImport;
+      }
+    }catch(err){ toast('Erro ao importar: ' + err.message); }
+  };
+  reader.readAsText(file);
+});
+
+// ============================================================
+// PWA — registra o Service Worker que guarda os arquivos do app em
+// cache, permitindo abrir mais rápido e continuar funcionando mesmo
+// sem internet. Se o navegador não suportar (raro hoje em dia), o
+// app continua funcionando normalmente, só sem esse recurso.
+//
+// Quando o sw.js publica uma versão nova (CACHE_VERSION alterado), o
+// navegador instala essa versão nova em segundo plano; assim que ela
+// assume o controle da página, recarregamos a tela sozinhos — assim
+// você sempre vê a versão mais recente do app, sem precisar limpar
+// cache manualmente.
+// ============================================================
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+
+  let swRefreshing = false;
+  navigator.serviceWorker.addEventListener('controllerchange', ()=>{
+    if(swRefreshing) return;
+    swRefreshing = true;
+    window.location.reload();
+  });
+}
+</script>
+</body>
+</html>
